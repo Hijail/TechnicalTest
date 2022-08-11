@@ -53,7 +53,15 @@ public class UserServiceImpl implements IUserService {
     }
 
     private void checkCountry(Country country) throws InvalidCountryException {
-        this.countryRepository.findByCountry(country.getCountry());
+        Country exist;
+
+        if (country == null) {
+            throw new InvalidCountryException("Null parameters are not allowed");
+        }
+        exist = this.countryRepository.findByCountry(country.getCountry());
+        if (exist == null) {
+            throw new InvalidCountryException("You must be in France");
+        }
     }
 
     /**
@@ -64,12 +72,8 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     public User createUser(User user) throws Exception {
-        try {
-            checkBirthDate(user.getBirthdate());
-            checkCountry(user.getCountry());
-        } catch (InvalidBirthdateException e) {
-            throw new InvalidBirthdateException(e.getMessage());
-        }
+        checkBirthDate(user.getBirthdate());
+        checkCountry(user.getCountry());
         this.userRepository.save(user);
         return user;
     }

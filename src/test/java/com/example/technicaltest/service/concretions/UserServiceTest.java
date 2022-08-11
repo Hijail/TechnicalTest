@@ -103,7 +103,7 @@ public class UserServiceTest {
 
         user.setBirthdate(new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime());
         user.setCountry(InitCountry("US"));
-        given(countryRepository.findByCountry("France")).willReturn(InitCountry("France"));
+        given(countryRepository.findByCountry("US")).willReturn(null);
         InvalidCountryException exception = assertThrows(InvalidCountryException.class, () -> {
             userService.createUser(user);
         });
