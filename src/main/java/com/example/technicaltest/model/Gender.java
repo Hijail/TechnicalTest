@@ -15,6 +15,7 @@ public class Gender {
     private String gender;
 
     public Gender() {
+        this.gender = "";
     }
 
     public Gender(String gender) {

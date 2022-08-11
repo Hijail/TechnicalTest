@@ -31,15 +31,15 @@ public class User {
         this.username = "";
         this.birthdate = new Date();
         this.country =  new Country();
-        this.gender = new Gender();
-        this.phoneNumber = "";
+        this.gender = null;
+        this.phoneNumber = null;
     }
 
     public User(String username) {
         this.username = username;
         this.birthdate = new Date();
         this.country =  new Country();
-        this.gender = new Gender();
-        this.phoneNumber = "";
+        this.gender = null;
+        this.phoneNumber = null;
     }
 }
