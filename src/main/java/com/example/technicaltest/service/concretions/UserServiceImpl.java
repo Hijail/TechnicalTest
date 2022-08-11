@@ -45,8 +45,8 @@ public class UserServiceImpl implements IUserService {
      */
     private void checkBirthDate(Date date) throws InvalidBirthdateException {
         LocalDate curDate = LocalDate.now();
-        LocalDate birth = null;
-        Integer age = 0;
+        LocalDate birth;
+        int age;
 
         if (date == null) {
             throw new InvalidBirthdateException("Null parameters are not allowed");
@@ -89,7 +89,7 @@ public class UserServiceImpl implements IUserService {
      * @return created user
      */
     @Override
-    public User createUser(User user) throws Exception {
+    public User createUser(User user) {
         checkBirthDate(user.getBirthdate());
         checkCountry(user.getCountry());
         checkGender(user.getGender());
