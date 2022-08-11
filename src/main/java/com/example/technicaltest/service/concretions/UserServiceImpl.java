@@ -2,9 +2,12 @@ package com.example.technicaltest.service.concretions;
 
 import com.example.technicaltest.exception.InvalidBirthdateException;
 import com.example.technicaltest.exception.InvalidCountryException;
+import com.example.technicaltest.exception.InvalidGenderException;
 import com.example.technicaltest.model.Country;
+import com.example.technicaltest.model.Gender;
 import com.example.technicaltest.model.User;
 import com.example.technicaltest.repository.CountryRepository;
+import com.example.technicaltest.repository.GenderRepository;
 import com.example.technicaltest.repository.UserRepository;
 import com.example.technicaltest.service.abstractions.IUserService;
 import org.springframework.stereotype.Service;
@@ -20,15 +23,18 @@ public class UserServiceImpl implements IUserService {
 
     private final CountryRepository countryRepository;
 
+    private final GenderRepository genderRepository;
+
     /**
      * User service constructor
      * Init user service repository
      *
      * @param userRepository User repository
      */
-    public UserServiceImpl(UserRepository userRepository, CountryRepository countryRepository) {
+    public UserServiceImpl(UserRepository userRepository, CountryRepository countryRepository, GenderRepository genderRepository) {
         this.userRepository = userRepository;
         this.countryRepository = countryRepository;
+        this.genderRepository = genderRepository;
     }
 
     /**
@@ -64,6 +70,18 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
+    private void checkGender(Gender gender) throws InvalidGenderException {
+        Gender exist;
+
+        if (gender == null) {
+            return;
+        }
+        exist = this.genderRepository.findByGender(gender.getGender());
+        if (exist == null) {
+            throw new InvalidGenderException("Only male / female / other or empty are allow for gender");
+        }
+    }
+
     /**
      * Create user
      *
@@ -74,6 +92,7 @@ public class UserServiceImpl implements IUserService {
     public User createUser(User user) throws Exception {
         checkBirthDate(user.getBirthdate());
         checkCountry(user.getCountry());
+        checkGender(user.getGender());
         this.userRepository.save(user);
         return user;
     }

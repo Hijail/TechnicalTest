@@ -7,6 +7,7 @@ import com.example.technicaltest.model.Country;
 import com.example.technicaltest.model.Gender;
 import com.example.technicaltest.model.User;
 import com.example.technicaltest.repository.CountryRepository;
+import com.example.technicaltest.repository.GenderRepository;
 import com.example.technicaltest.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +30,8 @@ public class UserServiceTest {
     @Mock
     UserRepository userRepository;
 
+    @Mock
+    GenderRepository genderRepository;
     @Mock
     CountryRepository countryRepository;
     @InjectMocks
@@ -147,6 +150,7 @@ public class UserServiceTest {
         user.setCountry(InitCountry("France"));
         user.setGender(male);
         given(countryRepository.findByCountry("France")).willReturn(InitCountry("France"));
+        given(genderRepository.findByGender("male")).willReturn(male);
         try {
             create = userService.createUser(user);
         } catch (Exception e) {
@@ -164,6 +168,7 @@ public class UserServiceTest {
         user.setBirthdate(new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime());
         user.setCountry(InitCountry("France"));
         user.setGender(female);
+        given(genderRepository.findByGender("female")).willReturn(female);
         given(countryRepository.findByCountry("France")).willReturn(InitCountry("France"));
         try {
             create = userService.createUser(user);
@@ -182,6 +187,7 @@ public class UserServiceTest {
         user.setBirthdate(new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime());
         user.setCountry(InitCountry("France"));
         user.setGender(other);
+        given(genderRepository.findByGender("other")).willReturn(other);
         given(countryRepository.findByCountry("France")).willReturn(InitCountry("France"));
         try {
             create = userService.createUser(user);
@@ -217,6 +223,7 @@ public class UserServiceTest {
         user.setBirthdate(new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime());
         user.setCountry(InitCountry("France"));
         user.setGender(invalid);
+        given(genderRepository.findByGender("invalid")).willReturn(null);
         given(countryRepository.findByCountry("France")).willReturn(InitCountry("France"));
         InvalidGenderException exception = assertThrows(InvalidGenderException.class, () -> {
             userService.createUser(user);

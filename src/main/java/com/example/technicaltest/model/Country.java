@@ -15,6 +15,7 @@ public class Country {
     private String country;
 
     public Country() {
+        this.country = "";
     }
 
     public Country(String country) {
