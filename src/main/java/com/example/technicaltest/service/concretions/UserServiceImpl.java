@@ -3,6 +3,7 @@ package com.example.technicaltest.service.concretions;
 import com.example.technicaltest.exception.InvalidBirthdateException;
 import com.example.technicaltest.exception.InvalidCountryException;
 import com.example.technicaltest.exception.InvalidGenderException;
+import com.example.technicaltest.exception.InvalidUsernameException;
 import com.example.technicaltest.model.Country;
 import com.example.technicaltest.model.Gender;
 import com.example.technicaltest.model.User;
@@ -82,6 +83,14 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
+    private void checkUsername(String username) throws InvalidUsernameException {
+        User exist = this.userRepository.findByUsername(username);
+
+        if (exist != null) {
+            throw new InvalidUsernameException("Username already exist");
+        }
+    }
+
     /**
      * Create user
      *
@@ -90,6 +99,7 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     public User createUser(User user) {
+        checkUsername(user.getUsername());
         checkBirthDate(user.getBirthdate());
         checkCountry(user.getCountry());
         checkGender(user.getGender());

@@ -222,14 +222,7 @@ public class UserServiceTest {
     public void testUsernameAlreadyExist() {
         final User user = new User("validUser");
 
-        user.setBirthdate(new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime());
-        user.setCountry(InitCountry("France"));
-        given(countryRepository.findByCountry("France")).willReturn(InitCountry("France"));
-        try {
-            userService.createUser(user);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        given(userRepository.findByUsername("validUser")).willReturn(user);
         InvalidUsernameException exception = assertThrows(InvalidUsernameException.class, () -> userService.createUser(user));
         assertEquals("Username already exist", exception.getMessage());
     }
