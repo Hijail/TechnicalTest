@@ -1,7 +1,10 @@
 package com.example.technicaltest.service.concretions;
 
 import com.example.technicaltest.exception.InvalidBirthdateException;
+import com.example.technicaltest.exception.InvalidCountryException;
+import com.example.technicaltest.model.Country;
 import com.example.technicaltest.model.User;
+import com.example.technicaltest.repository.CountryRepository;
 import com.example.technicaltest.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,25 +19,40 @@ import java.util.GregorianCalendar;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
     @Mock
     UserRepository userRepository;
+
+    @Mock
+    CountryRepository countryRepository;
     @InjectMocks
     UserServiceImpl userService;
 
+    private Country country;
+
+    private Country InitCountry(String countryName) {
+        country = new Country();
+        country.setCountry(countryName);
+
+        return country;
+    }
+
     /**
      * Test create user method
-     * with valid birthdate
+     * with valid birthdate, country ...
      */
     @Test
-    public void testValidBirthdate() {
-        final User user = new User("validBirthdate");
+    public void testCreateUser() {
+        final User user = new User("validUser");
+        User create = null;
 
         user.setBirthdate(new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime());
-        User create = null;
+        user.setCountry(InitCountry("France"));
+        given(countryRepository.findByCountry("France")).willReturn(InitCountry("France"));
         try {
             create = userService.createUser(user);
         } catch (Exception e) {
@@ -42,6 +60,7 @@ public class UserServiceTest {
         }
         assertEquals(new SimpleDateFormat("dd MMM yyyy").format(create.getBirthdate()),
                 new SimpleDateFormat("dd MMM yyyy").format(user.getBirthdate()));
+        assertEquals(user.getCountry().getCountry(), create.getCountry().getCountry());
     }
 
     /**
@@ -69,6 +88,39 @@ public class UserServiceTest {
 
         user.setBirthdate(null);
         InvalidBirthdateException exception = assertThrows(InvalidBirthdateException.class, () -> {
+            userService.createUser(user);
+        });
+        assertEquals("Null parameters are not allowed", exception.getMessage());
+    }
+
+    /**
+     * Test create user method
+     * with invalid country
+     */
+    @Test
+    public void testInvalidCountry() {
+        final User user = new User("invalidCountry");
+
+        user.setBirthdate(new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime());
+        user.setCountry(InitCountry("US"));
+        given(countryRepository.findByCountry("France")).willReturn(InitCountry("France"));
+        InvalidCountryException exception = assertThrows(InvalidCountryException.class, () -> {
+            userService.createUser(user);
+        });
+        assertEquals("You must be in France", exception.getMessage());
+    }
+
+    /**
+     * Test create user method
+     * with null country
+     */
+    @Test
+    public void testNullCountry() {
+        final User user = new User("nullCountry");
+
+        user.setBirthdate(new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime());
+        user.setCountry(null);
+        InvalidCountryException exception = assertThrows(InvalidCountryException.class, () -> {
             userService.createUser(user);
         });
         assertEquals("Null parameters are not allowed", exception.getMessage());
