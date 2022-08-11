@@ -2,7 +2,12 @@ package com.example.technicaltest.service.concretions;
 
 import com.example.technicaltest.exception.InvalidBirthdateException;
 import com.example.technicaltest.model.User;
+import com.example.technicaltest.repository.UserRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -12,7 +17,13 @@ import java.util.GregorianCalendar;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
+
+    @Mock
+    UserRepository userRepository;
+    @InjectMocks
+    UserServiceImpl userService;
 
     /**
      * Test create user method
@@ -20,11 +31,15 @@ public class UserServiceTest {
      */
     @Test
     public void testValidBirthdate() {
-        final UserServiceImpl userService = new UserServiceImpl();
         final User user = new User("validBirthdate");
 
-        user.setBirthdate(new GregorianCalendar(2020, Calendar.FEBRUARY, 21).getTime());
-        User create = userService.createUser(user);
+        user.setBirthdate(new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime());
+        User create = null;
+        try {
+            create = userService.createUser(user);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         assertEquals(new SimpleDateFormat("dd MMM yyyy").format(create.getBirthdate()),
                 new SimpleDateFormat("dd MMM yyyy").format(user.getBirthdate()));
     }
@@ -35,7 +50,6 @@ public class UserServiceTest {
      */
     @Test
     public void testInvalidBirthdate() {
-        final UserServiceImpl userService = new UserServiceImpl();
         final User user = new User("invalidBirthdate");
 
         user.setBirthdate(new GregorianCalendar(2020, Calendar.FEBRUARY, 21).getTime());
@@ -51,7 +65,6 @@ public class UserServiceTest {
      */
     @Test
     public void testNullBirthdate() {
-        final UserServiceImpl userService = new UserServiceImpl();
         final User user = new User("nullBirthdate");
 
         user.setBirthdate(null);
