@@ -2,6 +2,7 @@ package com.example.technicaltest.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.util.Date;
 
 @Entity
 @Data
@@ -14,7 +15,7 @@ public class User {
 
     private String username;
 
-    private String birthdate;
+    private Date birthdate;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "country_id", referencedColumnName = "id")
@@ -27,9 +28,18 @@ public class User {
     private String phoneNumber;
 
     public User() {
+        this.username = "";
+        this.birthdate = new Date();
+        this.country =  new Country();
+        this.gender = new Gender();
+        this.phoneNumber = "";
     }
 
     public User(String username) {
         this.username = username;
+        this.birthdate = new Date();
+        this.country =  new Country();
+        this.gender = new Gender();
+        this.phoneNumber = "";
     }
 }
