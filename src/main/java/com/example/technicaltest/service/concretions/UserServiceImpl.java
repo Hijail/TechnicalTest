@@ -1,7 +1,10 @@
 package com.example.technicaltest.service.concretions;
 
 import com.example.technicaltest.exception.InvalidBirthdateException;
+import com.example.technicaltest.exception.InvalidCountryException;
+import com.example.technicaltest.model.Country;
 import com.example.technicaltest.model.User;
+import com.example.technicaltest.repository.CountryRepository;
 import com.example.technicaltest.repository.UserRepository;
 import com.example.technicaltest.service.abstractions.IUserService;
 import org.springframework.stereotype.Service;
@@ -15,14 +18,17 @@ import java.util.Date;
 public class UserServiceImpl implements IUserService {
     private final UserRepository userRepository;
 
+    private final CountryRepository countryRepository;
+
     /**
      * User service constructor
      * Init user service repository
      *
      * @param userRepository User repository
      */
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, CountryRepository countryRepository) {
         this.userRepository = userRepository;
+        this.countryRepository = countryRepository;
     }
 
     /**
@@ -31,7 +37,7 @@ public class UserServiceImpl implements IUserService {
      * @param date Birthdate of user
      * @throws InvalidBirthdateException if birthdate is null or if birthdate is invalid
      */
-    private static void checkBirthDate(Date date) throws InvalidBirthdateException {
+    private void checkBirthDate(Date date) throws InvalidBirthdateException {
         LocalDate curDate = LocalDate.now();
         LocalDate birth = null;
         Integer age = 0;
@@ -46,6 +52,10 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
+    private void checkCountry(Country country) throws InvalidCountryException {
+        this.countryRepository.findByCountry(country.getCountry());
+    }
+
     /**
      * Create user
      *
@@ -56,6 +66,7 @@ public class UserServiceImpl implements IUserService {
     public User createUser(User user) throws Exception {
         try {
             checkBirthDate(user.getBirthdate());
+            checkCountry(user.getCountry());
         } catch (InvalidBirthdateException e) {
             throw new InvalidBirthdateException(e.getMessage());
         }
