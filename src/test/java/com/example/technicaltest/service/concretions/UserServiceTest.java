@@ -1,9 +1,6 @@
 package com.example.technicaltest.service.concretions;
 
-import com.example.technicaltest.exception.InvalidBirthdateException;
-import com.example.technicaltest.exception.InvalidCountryException;
-import com.example.technicaltest.exception.InvalidGenderException;
-import com.example.technicaltest.exception.InvalidUsernameException;
+import com.example.technicaltest.exception.*;
 import com.example.technicaltest.model.Country;
 import com.example.technicaltest.model.Gender;
 import com.example.technicaltest.model.User;
@@ -225,5 +222,51 @@ public class UserServiceTest {
         given(userRepository.findByUsername("validUser")).willReturn(user);
         InvalidUsernameException exception = assertThrows(InvalidUsernameException.class, () -> userService.createUser(user));
         assertEquals("Username already exist", exception.getMessage());
+    }
+
+    @Test
+    public void testInvalidPhone() {
+        String[] validPhoneNumbers
+                = {"20555501256","202 555 A0125", "(202) 555--0125", "+111 (202) 555%-0125",
+                "6%6 856 789", "+11$ 636 856 789", "636 8A 67 89", "+111 6(6 85 67 89"};
+        final User user = new User("validUser");
+        int index = 0;
+
+        user.setBirthdate(new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime());
+        user.setCountry(InitCountry("France"));
+        given(countryRepository.findByCountry("France")).willReturn(InitCountry("France"));
+        for(String phoneNumber : validPhoneNumbers) {
+            user.setPhoneNumber(phoneNumber);
+            user.setUsername("user_" + index);
+            InvalidPhoneException exception = assertThrows(InvalidPhoneException.class, () -> userService.createUser(user));
+            assertEquals("Invalid phone number", exception.getMessage());
+            index ++;
+        }
+    }
+
+    @Test
+    public void whenMatchesPhoneNumber_thenCorrect() {
+        String[] validPhoneNumbers
+                = {"2055550125","202 555 0125", "(202) 555-0125", "+111 (202) 555-0125",
+                "636 856 789", "+111 636 856 789", "636 85 67 89", "+111 636 85 67 89", null};
+        final User user = new User("validUser");
+        int index = 0;
+        User create;
+
+        user.setBirthdate(new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime());
+        user.setCountry(InitCountry("France"));
+        given(countryRepository.findByCountry("France")).willReturn(InitCountry("France"));
+        try {
+            for(String phoneNumber : validPhoneNumbers) {
+                user.setPhoneNumber(phoneNumber);
+                user.setUsername("user_" + index);
+                create = userService.createUser(user);
+                assertEquals(user.getUsername(), create.getUsername());
+                assertEquals(user.getPhoneNumber(), create.getPhoneNumber());
+                index ++;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
