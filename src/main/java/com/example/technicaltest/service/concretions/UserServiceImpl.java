@@ -1,9 +1,6 @@
 package com.example.technicaltest.service.concretions;
 
-import com.example.technicaltest.exception.InvalidBirthdateException;
-import com.example.technicaltest.exception.InvalidCountryException;
-import com.example.technicaltest.exception.InvalidGenderException;
-import com.example.technicaltest.exception.InvalidUsernameException;
+import com.example.technicaltest.exception.*;
 import com.example.technicaltest.model.Country;
 import com.example.technicaltest.model.Gender;
 import com.example.technicaltest.model.User;
@@ -17,6 +14,8 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class UserServiceImpl implements IUserService {
@@ -91,6 +90,22 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
+    private void checkPhoneNumber(String phoneNumber) {
+        String patterns = "^(\\+\\d{1,3}( )?)?((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$"
+                + "|^(\\+\\d{1,3}( )?)?(\\d{3}[ ]?){2}\\d{3}$"
+                + "|^(\\+\\d{1,3}( )?)?(\\d{3}[ ]?)(\\d{2}[ ]?){2}\\d{2}$";
+        Pattern pattern = Pattern.compile(patterns);
+        Matcher matcher;
+
+        if (phoneNumber == null) {
+            return;
+        }
+        matcher = pattern.matcher(phoneNumber);
+        if (matcher.matches() != true) {
+            throw new InvalidPhoneException("Invalid phone number");
+        }
+    }
+
     /**
      * Create user
      *
@@ -103,6 +118,7 @@ public class UserServiceImpl implements IUserService {
         checkBirthDate(user.getBirthdate());
         checkCountry(user.getCountry());
         checkGender(user.getGender());
+        checkPhoneNumber(user.getPhoneNumber());
         this.userRepository.save(user);
         return user;
     }
