@@ -29,16 +29,16 @@ public class User {
 
     public User() {
         this.username = "";
-        this.birthdate = new Date();
-        this.country =  new Country();
+        this.birthdate = null;
+        this.country =  null;
         this.gender = null;
         this.phoneNumber = null;
     }
 
     public User(String username) {
         this.username = username;
-        this.birthdate = new Date();
-        this.country =  new Country();
+        this.birthdate = null;
+        this.country =  null;
         this.gender = null;
         this.phoneNumber = null;
     }
