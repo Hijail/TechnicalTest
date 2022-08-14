@@ -12,10 +12,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = UserController.class)
 public class UserControllerTest {
@@ -50,6 +51,12 @@ public class UserControllerTest {
                         .andExpect(content().json(responseDetails.toString()));
     }
 
+
+    /**
+     * Test create user route with bad content
+     *
+     * @throws Exception if route doesn't return correct response
+     */
     @Test
     public void createUserTestFailBadContent() throws Exception {
         User user = new User("Jean");
@@ -116,6 +123,51 @@ public class UserControllerTest {
         responseDetails.put("message", "Invalid phone number");
         this.mockMvc.perform(post("/api/v1/users")
                         .content(json)
+                        .contentType("application/json"))
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().json(responseDetails.toString()));
+    }
+
+    /**
+     * Test get user by id route
+     *
+     * @throws Exception if route doesn't return correct user
+     */
+    @Test
+    public void getUserByIdTest() throws Exception {
+        final Long id = 1L;
+        User user = new User("Jean");
+        JSONObject responseDetails = new JSONObject();
+
+        user.setId(id);
+        responseDetails.put("data", user);
+        responseDetails.put("status", HttpStatus.ACCEPTED.value());
+        responseDetails.put("message", "");
+        given(service.getUserById(id)).willReturn(user);
+
+        this.mockMvc.perform(get("/api/v1/users/{id}", id)
+                        .contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(responseDetails.toString()));
+    }
+
+    /**
+     * Test get user by id error
+     *
+     * @throws Exception if route doesn't return Bad Request status
+     */
+    @Test
+    public void getUserByIdErrorTest() throws Exception {
+        final Long id = 1L;
+        JSONObject responseDetails = new JSONObject();
+
+        responseDetails.put("data", null);
+        responseDetails.put("status", HttpStatus.BAD_REQUEST.value());
+        responseDetails.put("message", "Invalid UserId");
+
+        given(service.getUserById(id)).willThrow(new UserException("Invalid UserId"));
+
+        this.mockMvc.perform(get("/api/v1/users/{id}", id)
                         .contentType("application/json"))
                         .andExpect(status().isBadRequest())
                         .andExpect(content().json(responseDetails.toString()));
