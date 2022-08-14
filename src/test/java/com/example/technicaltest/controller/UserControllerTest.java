@@ -141,7 +141,7 @@ public class UserControllerTest {
 
         user.setId(id);
         responseDetails.put("data", user);
-        responseDetails.put("status", HttpStatus.ACCEPTED.value());
+        responseDetails.put("status", HttpStatus.OK.value());
         responseDetails.put("message", "");
         given(service.getUserById(id)).willReturn(user);
 

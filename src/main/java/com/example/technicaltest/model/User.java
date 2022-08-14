@@ -17,6 +17,7 @@ public class User {
 
     private Date birthdate;
 
+    // TODO change pour ne pas recréer d'item dans les tables country et france
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "country_id", referencedColumnName = "id")
     private Country country;
