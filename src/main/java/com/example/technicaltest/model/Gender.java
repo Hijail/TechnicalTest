@@ -1,5 +1,6 @@
 package com.example.technicaltest.model;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import javax.persistence.*;
 
@@ -12,6 +13,7 @@ public class Gender {
     @Column(name = "id")
     private Long id;
 
+    @ApiModelProperty(position = 1, required = true, value = "male / female / other")
     private String gender;
 
     public Gender() {

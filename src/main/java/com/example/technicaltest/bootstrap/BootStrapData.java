@@ -28,8 +28,11 @@ public class BootStrapData implements CommandLineRunner {
      *
      */
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         System.out.println("Create product");
+
+        Country france = new Country("France", 18);
+        countryRepository.save(france);
 
         Gender male = new Gender("male");
         genderRepository.save(male);
@@ -37,8 +40,5 @@ public class BootStrapData implements CommandLineRunner {
         genderRepository.save(female);
         Gender other = new Gender("other");
         genderRepository.save(other);
-
-        Country france = new Country("France");
-        countryRepository.save(france);
     }
 }

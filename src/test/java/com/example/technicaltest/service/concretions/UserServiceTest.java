@@ -23,6 +23,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
+/**
+ * Class User Service Test
+ * @author Baptiste Gellato
+ * @version 0.0.1
+ */
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
@@ -36,6 +41,11 @@ public class UserServiceTest {
     @InjectMocks
     UserServiceImpl userService;
 
+    /**
+     * Init Country Test
+     *
+     * @return new Country
+     */
     private Country InitCountry(String countryName) {
         Country country = new Country();
         country.setCountry(countryName);
@@ -43,6 +53,11 @@ public class UserServiceTest {
         return country;
     }
 
+    /**
+     * Init Gender Test
+     *
+     * @return new Gender
+     */
     private Gender InitGender(String genderType) {
         Gender gender = new Gender();
         gender.setGender(genderType);
@@ -80,7 +95,10 @@ public class UserServiceTest {
     @Test
     public void testInvalidBirthdate() {
         final User user = new User("invalidBirthdate");
+        Country france = new Country("France", 18);
 
+        given(countryRepository.findByCountry("France")).willReturn(france);
+        user.setCountry(france);
         user.setBirthdate(new GregorianCalendar(2020, Calendar.FEBRUARY, 21).getTime());
         InvalidBirthdateException exception = assertThrows(InvalidBirthdateException.class, () -> userService.createUser(user));
         assertEquals("You must be of legal age", exception.getMessage());
@@ -93,7 +111,10 @@ public class UserServiceTest {
     @Test
     public void testNullBirthdate() {
         final User user = new User("nullBirthdate");
+        Country france = new Country("France", 18);
 
+        given(countryRepository.findByCountry("France")).willReturn(france);
+        user.setCountry(france);
         user.setBirthdate(null);
         InvalidBirthdateException exception = assertThrows(InvalidBirthdateException.class, () -> userService.createUser(user));
         assertEquals("Null parameters are not allowed", exception.getMessage());
@@ -128,6 +149,10 @@ public class UserServiceTest {
         assertEquals("Null parameters are not allowed", exception.getMessage());
     }
 
+    /**
+     * Test create user method
+     * with male gender
+     */
     @Test
     public void testFirstValidGender() {
         final User user = new User("validUser");
@@ -147,6 +172,10 @@ public class UserServiceTest {
         assertEquals(user.getGender().getGender(), create.getGender().getGender());
     }
 
+    /**
+     * Test create user method
+     * with female gender
+     */
     @Test
     public void testSecondValidGender() {
         final User user = new User("validUser");
@@ -166,6 +195,10 @@ public class UserServiceTest {
         assertEquals(user.getGender().getGender(), create.getGender().getGender());
     }
 
+    /**
+     * Test create user method
+     * with other gender
+     */
     @Test
     public void testThirdValidGender() {
         final User user = new User("validUser");
@@ -185,6 +218,10 @@ public class UserServiceTest {
         assertEquals(user.getGender().getGender(), create.getGender().getGender());
     }
 
+    /**
+     * Test create user method
+     * with null gender
+     */
     @Test
     public void testNullGender() {
         final User user = new User("validUser");
@@ -202,6 +239,10 @@ public class UserServiceTest {
         assertEquals(user.getGender(), create.getGender());
     }
 
+    /**
+     * Test create user method
+     * with invalid gender
+     */
     @Test
     public void testInvalidGender() {
         final User user = new User("validUser");
@@ -216,6 +257,10 @@ public class UserServiceTest {
         assertEquals("Only male / female / other or empty are allow for gender", exception.getMessage());
     }
 
+    /**
+     * Test create user method
+     * with existing username
+     */
     @Test
     public void testUsernameAlreadyExist() {
         final User user = new User("validUser");
@@ -225,6 +270,10 @@ public class UserServiceTest {
         assertEquals("Username already exist", exception.getMessage());
     }
 
+    /**
+     * Test create user method
+     * with invalid phone number
+     */
     @Test
     public void testInvalidPhone() {
         String[] validPhoneNumbers
@@ -245,6 +294,10 @@ public class UserServiceTest {
         }
     }
 
+    /**
+     * Test create user method
+     * with correct phone number
+     */
     @Test
     public void whenMatchesPhoneNumber_thenCorrect() {
         String[] validPhoneNumbers
@@ -271,6 +324,10 @@ public class UserServiceTest {
         }
     }
 
+    /**
+     * Test get user by id method
+     * fail if user is null
+     */
     @Test
     public void testGetUserByIdOk() {
         User user = new User("Jean");
@@ -283,6 +340,10 @@ public class UserServiceTest {
         assertThat(expected).isNotNull();
     }
 
+    /**
+     * Test get user by id method
+     * fail if method doesn't throw
+     */
     @Test
     public void testGetUserByIdFail() {
         final Long id = 1L;
