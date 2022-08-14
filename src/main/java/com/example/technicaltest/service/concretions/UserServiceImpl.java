@@ -123,4 +123,9 @@ public class UserServiceImpl implements IUserService {
         this.userRepository.save(user);
         return user;
     }
+
+    @Override
+    public User getUserById(Long id) {
+        return null;
+    }
 }
