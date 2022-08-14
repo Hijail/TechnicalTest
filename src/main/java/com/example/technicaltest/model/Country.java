@@ -14,6 +14,8 @@ public class Country {
 
     private String country;
 
+    // TODO add legal age
+
     public Country() {
         this.country = "";
     }

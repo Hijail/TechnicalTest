@@ -53,6 +53,7 @@ public class UserServiceImpl implements IUserService {
         }
         birth = LocalDate.ofInstant(date.toInstant(), ZoneId.systemDefault());
         age = Period.between(birth, curDate).getYears();
+        // TODO change legal age
         if (age < 18) {
             throw new InvalidBirthdateException("You must be of legal age");
         }
@@ -90,7 +91,7 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
-    private void checkPhoneNumber(String phoneNumber) {
+    private void checkPhoneNumber(String phoneNumber) throws InvalidPhoneException {
         String patterns = "^(\\+\\d{1,3}( )?)?((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$"
                 + "|^(\\+\\d{1,3}( )?)?(\\d{3}[ ]?){2}\\d{3}$"
                 + "|^(\\+\\d{1,3}( )?)?(\\d{3}[ ]?)(\\d{2}[ ]?){2}\\d{2}$";
@@ -113,7 +114,7 @@ public class UserServiceImpl implements IUserService {
      * @return created user
      */
     @Override
-    public User createUser(User user) {
+    public User createUser(User user) throws Exception {
         checkUsername(user.getUsername());
         checkBirthDate(user.getBirthdate());
         checkCountry(user.getCountry());
