@@ -16,8 +16,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Optional;
 
-
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
@@ -268,5 +269,27 @@ public class UserServiceTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    public void testGetUserByIdOk() {
+        User user = new User("Jean");
+
+        user.setId(1L);
+        given(userRepository.findById(1L)).willReturn(Optional.of(user));
+
+        final Optional<User> expected = Optional.ofNullable(userService.getUserById(1L));
+
+        assertThat(expected).isNotNull();
+    }
+
+    @Test
+    public void testGetUserByIdFail() {
+        final Long id = 1L;
+        User p1 = null;
+
+        given(userRepository.findById(id)).willReturn(Optional.ofNullable(p1));
+        UserException exception = assertThrows(UserException.class, () -> userService.getUserById(id));
+        assertEquals("Invalid UserId", exception.getMessage());
     }
 }

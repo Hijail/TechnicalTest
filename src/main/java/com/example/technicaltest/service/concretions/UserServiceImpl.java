@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -126,6 +127,11 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public User getUserById(Long id) {
-        return null;
+        Optional<User> user = this.userRepository.findById(id);
+
+        if (!user.isPresent()) {
+            throw new UserException("Invalid UserId");
+        }
+        return user.get();
     }
 }
