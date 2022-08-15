@@ -19,7 +19,7 @@ When you’re done, go ahead and launch IntelliJ IDEA.
 To import an existing project you need some code, so clone or copy one of the Getting Started guides, e.g. the REST Service guide:
 
 ```
-$ git clone https://github.com/spring-guides/gs-rest-service.gitCOPY
+$ git clone https://github.com/Hijail/TechnicalTest.git
 ```
 
 With IntelliJ IDEA up and running, click Import Project on the Welcome Screen, or File | Open on the main menu:
