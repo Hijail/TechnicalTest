@@ -1,0 +1,91 @@
+{
+	"info": {
+		"_postman_id": "2e5c7e0b-5029-4feb-9be1-c7aab1e1b4e8",
+		"name": "TechnicalTestApplication Copy",
+		"description": "# Introduction\nThe purpose of this API is to create users and to visualize the users created\n\n# Overview\nThere are two routes on this API,\nthe first one /users which allows to create new user, it is necessary to give him a user of this type :\n{\n    \"username\": \"test\",\n    \"gender\": {\n        \"gender\": \"male\"\n    },\n    \"country\": {\n        \"country\": \"France\"\n    },\n    \"phone\": null,\n    \"birthdate\": \"2000-08-14T23:18:14.337Z\"\n}\n\nThe second /users/{id} allows to retrieve a user thanks to its id\n\n# Error Codes\n\n400 : Null parameters are not allowed\n400 : You must be of legal age\n400 : You must be in France\n400 : Only male / female / other or empty are allow for gender 400 : Username already exist\n400 : Invalid phone number\n400\t: Invalid UserId\n404\t: Service not found\n500\t: Server error\n",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5704551"
+	},
+	"item": [
+		{
+			"name": "/api/v1/users",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"userTest\",\n  \"birthdate\": \"2000-08-14T23:58:20.231Z\",\n  \"country\": {\n    \"country\": \"France\"\n  },\n  \"gender\": {\n    \"gender\": \"male\"\n  },\n  \"phoneNumber\": \"0123456789\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/users",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users"
+					]
+				},
+				"description": "Create user"
+			},
+			"response": []
+		},
+		{
+			"name": "/api/v1/users/{id}",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/users/{id}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users",
+						"{id}"
+					]
+				},
+				"description": "Get user by id"
+			},
+			"response": []
+		},
+		{
+			"name": "swagger",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/swagger-ui.html",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"swagger-ui.html"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080/"
+		}
+	]
+}
