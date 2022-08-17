@@ -3,7 +3,10 @@ package com.example.technicaltest;
 import lombok.Data;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+
+import java.util.TimeZone;
 
 @Data
 @EnableAspectJAutoProxy
@@ -12,5 +15,12 @@ public class TechnicalTestApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(TechnicalTestApplication.class, args);
+    }
+
+    @Bean
+    public TimeZone timeZone(){
+        TimeZone defaultTimeZone = TimeZone.getTimeZone("UTC");
+        TimeZone.setDefault(defaultTimeZone);
+        return defaultTimeZone;
     }
 }

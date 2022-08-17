@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">TechnicalTest</a> &gt; <a href="index.source.html" class="el_package">com.example.technicaltest.controller</a> &gt; <span class="el_source">UserController.java</span></div><h1>UserController.java</h1><pre class="source lang-java linenums">package com.example.technicaltest.controller;
+
+import com.example.technicaltest.exception.InvalidBirthdateException;
+import com.example.technicaltest.exception.InvalidCountryException;
+import com.example.technicaltest.exception.InvalidUsernameException;
+import com.example.technicaltest.exception.UserException;
+import com.example.technicaltest.model.User;
+import com.example.technicaltest.response.ResponseHandler;
+import com.example.technicaltest.service.abstractions.IUserService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+/**
+ * Class Rest API User Controller
+ * @author Baptiste Gellato
+ * @version 0.0.1
+ */
+@RestController
+@RequestMapping(UserController.BASE_URL)
+public class UserController {
+    public  static final String BASE_URL = &quot;/api/v1/users&quot;;
+
+    private final IUserService userService;
+
+    /**
+     * User Controller constructor
+     * Init User controller service
+     * @param userService  User Service
+     */
+    @Autowired
+<span class="fc" id="L38">    public UserController(IUserService userService) {</span>
+<span class="fc" id="L39">        this.userService = userService;</span>
+<span class="fc" id="L40">    }</span>
+
+    /**
+     * Create user
+     *
+     * @param user  Request body how contain user information
+     * @return created user or Bad Request if fail
+     */
+    @ApiOperation(value = &quot;createUser&quot;, notes = &quot;create new user&quot;, nickname = &quot;createUser&quot;, code = 201)
+    @ApiResponses(value = {
+            @ApiResponse(code = 500, message = &quot;Server error&quot;),
+            @ApiResponse(code = 404, message = &quot;Service not found&quot;),
+            @ApiResponse(code = 201, message = &quot;User Created&quot;,
+                    response = User.class, responseContainer = &quot;List&quot;),
+            @ApiResponse(code = 403, message = &quot;[\&quot;Null parameters are not allowed\&quot;, \&quot;You must be of legal age\&quot;, \&quot;You must be in France\&quot;]&quot;),
+            @ApiResponse(code = 400, message = &quot;[\&quot;Null parameters are not allowed\&quot;, \&quot;Only male / female / other or empty are allow for gender\&quot;, \&quot;Username already exist\&quot;, \&quot;Invalid phone number\&quot;]&quot;),
+    })
+    @PostMapping()
+    public ResponseEntity&lt;Object&gt; createUser(@RequestBody User user)
+    {
+        User newUser;
+
+        try {
+<span class="fc" id="L63">            newUser = this.userService.createUser(user);</span>
+<span class="fc" id="L64">            return ResponseHandler.generateResponse(&quot;User Created&quot;, HttpStatus.CREATED, newUser);</span>
+<span class="fc" id="L65">        } catch (InvalidBirthdateException | InvalidCountryException | InvalidUsernameException exc) {</span>
+<span class="fc" id="L66">            return ResponseHandler.generateResponse(exc.getMessage(), HttpStatus.FORBIDDEN, null);</span>
+<span class="fc" id="L67">        } catch (Exception exc) {</span>
+<span class="fc" id="L68">            return ResponseHandler.generateResponse(exc.getMessage(), HttpStatus.BAD_REQUEST, null);</span>
+        }
+    }
+
+    /**
+     * Get user by user Id
+     *
+     * @param id  User Id
+     * @return user if success or Bad Request if fail
+     */
+    @ApiOperation(value = &quot;getUserById&quot;, notes = &quot;get user by id&quot;, nickname = &quot;getUserById&quot;)
+    @ApiResponses(value = {
+            @ApiResponse(code = 500, message = &quot;Server error&quot;),
+            @ApiResponse(code = 404, message = &quot;Service not found&quot;),
+            @ApiResponse(code = 200, message = &quot;&quot;,
+                    response = User.class, responseContainer = &quot;List&quot;),
+            @ApiResponse(code = 400, message = &quot;Invalid UserId&quot;)
+    })
+    @GetMapping(value = &quot;/{id}&quot;, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity&lt;Object&gt; getUserById(@ApiParam(value = &quot;testId&quot;, required = true, defaultValue = &quot;5&quot;)
+                                                  @PathVariable long id) {
+        try {
+<span class="fc" id="L90">            User user = userService.getUserById(id);</span>
+<span class="fc" id="L91">            return ResponseHandler.generateResponse(&quot;&quot;, HttpStatus.OK, user);</span>
+        }
+<span class="fc" id="L93">        catch (UserException err) {</span>
+<span class="fc" id="L94">            return ResponseHandler.generateResponse(err.getMessage(), HttpStatus.BAD_REQUEST, null);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

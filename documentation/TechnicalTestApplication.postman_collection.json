@@ -8,13 +8,186 @@
 	},
 	"item": [
 		{
+			"name": "Route errors",
+			"item": [
+				{
+					"name": "Invalid age",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"userTest\",\n  \"birthdate\": \"2020-08-14T23:58:20.231Z\",\n  \"country\": {\n    \"countryName\": \"France\"\n  },\n  \"gender\": {\n    \"genderType\": \"male\"\n  },\n  \"phoneNumber\": \"0123456789\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Null Age",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"userTest\",\n  \"birthdate\": null,\n  \"country\": {\n    \"countryName\": \"France\"\n  },\n  \"gender\": {\n    \"genderType\": \"male\"\n  },\n  \"phoneNumber\": \"0123456789\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid Country",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"userTest\",\n  \"birthdate\": \"2000-08-14T23:58:20.231Z\",\n  \"country\": {\n    \"countryName\": \"US\"\n  },\n  \"gender\": {\n    \"genderType\": \"male\"\n  },\n  \"phoneNumber\": \"0123456789\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Null Country",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"userTest\",\n  \"birthdate\": \"2000-08-14T23:58:20.231Z\",\n  \"country\": null,\n  \"gender\": {\n    \"genderType\": \"male\"\n  },\n  \"phoneNumber\": \"0123456789\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid Gender",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"Jean\",\n  \"birthdate\": \"2000-08-14T23:58:20.231Z\",\n  \"country\": {\n    \"countryName\": \"France\"\n  },\n  \"gender\": {\n    \"genderType\": \"invalid\"\n  },\n  \"phoneNumber\": \"0123456789\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid Phone",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"Jean\",\n  \"birthdate\": \"2000-08-14T23:58:20.231Z\",\n  \"country\": {\n    \"countryName\": \"France\"\n  },\n  \"gender\": {\n    \"genderType\": \"male\"\n  },\n  \"phoneNumber\": \"0123X56789\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "/api/v1/users",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"username\": \"userTest\",\n  \"birthdate\": \"2000-08-14T23:58:20.231Z\",\n  \"country\": {\n    \"country\": \"France\"\n  },\n  \"gender\": {\n    \"gender\": \"male\"\n  },\n  \"phoneNumber\": \"0123456789\"\n}",
+					"raw": "{\n  \"username\": \"userTest\",\n  \"birthdate\": \"2000-08-14T23:58:20.231Z\",\n  \"country\": {\n    \"countryName\": \"France\"\n  },\n  \"gender\": {\n    \"genderType\": \"male\"\n  },\n  \"phoneNumber\": \"0123456789\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"

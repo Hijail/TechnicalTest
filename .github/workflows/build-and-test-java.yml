@@ -30,3 +30,13 @@ jobs:
         run: mvn -B clean package -DskipTests
       - name: Maven Verify
         run: mvn -B clean verify
+
+  build-container:
+    needs: test
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build the Docker image
+        run: docker build -t technical-test .

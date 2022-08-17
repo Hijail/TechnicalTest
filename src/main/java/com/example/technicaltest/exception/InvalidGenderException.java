@@ -5,7 +5,7 @@ public class InvalidGenderException extends RuntimeException {
     /**
      * Exception for user services method when gender is invalid
      *
-     * @param errorMessage
+     * @param errorMessage - error message
      */
     public InvalidGenderException(String errorMessage) {
         super(errorMessage);
