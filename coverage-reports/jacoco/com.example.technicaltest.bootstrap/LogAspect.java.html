@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LogAspect.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">TechnicalTest</a> &gt; <a href="index.source.html" class="el_package">com.example.technicaltest.bootstrap</a> &gt; <span class="el_source">LogAspect.java</span></div><h1>LogAspect.java</h1><pre class="source lang-java linenums">package com.example.technicaltest.bootstrap;
+
+import org.apache.logging.log4j.LogManager;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.stereotype.Component;
+
+import org.apache.logging.log4j.Logger;
+
+@Aspect
+@Component
+<span class="fc" id="L15">public class LogAspect {</span>
+<span class="fc" id="L16">    private static Logger logger = LogManager.getLogger(LogAspect.class);</span>
+
+    @Pointcut(&quot;execution (public * com.example.technicaltest.service.concretions.*ServiceImpl.*(..))&quot;)
+    public void methodCall() {
+        /**
+         * This method does not contain any code because it will never be called.
+         * This is a convention to declare a cup and give it the same name as the method.
+         * So we declare a cup that we call methodCall.
+         * We can then use this name in the declaration of the cuts for the @Before and @AfterThrowing annotation
+         */
+<span class="nc" id="L26">    }</span>
+
+    /**
+     * Log enter service public method
+     *
+     * @param joinPoint - Provides reflective access to both the state available at a join point
+     *                  and static information about it. This information is available from the body of advice
+     *                  using the special form thisJoinPoint. The primary use of this reflective
+     *                  information is for tracing and logging applications.
+     */
+    @Before(&quot;methodCall()&quot;)
+    public void log(JoinPoint joinPoint) {
+<span class="nc" id="L38">        logger.info(&quot;Call &quot; + joinPoint.toShortString() +</span>
+<span class="nc" id="L39">                &quot; with &quot; + joinPoint.getArgs().length + &quot; parameters%n&quot;);</span>
+<span class="nc" id="L40">    }</span>
+
+    /**
+     * Log return throw service public method
+     *
+     * @param joinPoint - Provides reflective access to both the state available at a join point
+     *                  and static information about it. This information is available from the body of advice
+     *                  using the special form thisJoinPoint. The primary use of this reflective
+     *                  information is for tracing and logging applications.
+     * @param e exception
+     */
+    @AfterThrowing(pointcut = &quot;methodCall()&quot;, throwing = &quot;e&quot;)
+    public void log(JoinPoint joinPoint, Throwable e) {
+<span class="nc" id="L53">        logger.info(&quot;Return &quot; + joinPoint.toShortString() +</span>
+<span class="nc" id="L54">                &quot; with exception &quot; + e.getClass().getSimpleName() +</span>
+<span class="nc" id="L55">                &quot; : &quot; + e.getMessage() + &quot;%n&quot;);</span>
+<span class="nc" id="L56">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

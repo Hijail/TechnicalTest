@@ -1,5 +1,8 @@
 package com.example.technicaltest.controller;
 
+import com.example.technicaltest.exception.InvalidBirthdateException;
+import com.example.technicaltest.exception.InvalidCountryException;
+import com.example.technicaltest.exception.InvalidUsernameException;
 import com.example.technicaltest.exception.UserException;
 import com.example.technicaltest.model.User;
 import com.example.technicaltest.response.ResponseHandler;
@@ -48,7 +51,8 @@ public class UserController {
             @ApiResponse(code = 404, message = "Service not found"),
             @ApiResponse(code = 201, message = "User Created",
                     response = User.class, responseContainer = "List"),
-            @ApiResponse(code = 400, message = "[\"Null parameters are not allowed\", \"You must be of legal age\", \"You must be in France\", \"Only male / female / other or empty are allow for gender\", \"Username already exist\", \"Invalid phone number\"]"),
+            @ApiResponse(code = 403, message = "[\"Null parameters are not allowed\", \"You must be of legal age\", \"You must be in France\"]"),
+            @ApiResponse(code = 400, message = "[\"Null parameters are not allowed\", \"Only male / female / other or empty are allow for gender\", \"Username already exist\", \"Invalid phone number\"]"),
     })
     @PostMapping()
     public ResponseEntity<Object> createUser(@RequestBody User user)
@@ -57,10 +61,12 @@ public class UserController {
 
         try {
             newUser = this.userService.createUser(user);
+            return ResponseHandler.generateResponse("User Created", HttpStatus.CREATED, newUser);
+        } catch (InvalidBirthdateException | InvalidCountryException | InvalidUsernameException exc) {
+            return ResponseHandler.generateResponse(exc.getMessage(), HttpStatus.FORBIDDEN, null);
         } catch (Exception exc) {
             return ResponseHandler.generateResponse(exc.getMessage(), HttpStatus.BAD_REQUEST, null);
         }
-        return ResponseHandler.generateResponse("User Created", HttpStatus.CREATED, newUser);
     }
 
     /**

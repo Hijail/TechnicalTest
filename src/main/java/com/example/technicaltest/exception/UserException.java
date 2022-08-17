@@ -4,7 +4,7 @@ public class UserException  extends RuntimeException {
     /**
      * Exception for user services method
      *
-     * @param errorMessage
+     * @param errorMessage - error message
      */
     public UserException(String errorMessage) {
         super(errorMessage);

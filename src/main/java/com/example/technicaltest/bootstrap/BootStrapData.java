@@ -4,12 +4,14 @@ import com.example.technicaltest.model.Country;
 import com.example.technicaltest.model.Gender;
 import com.example.technicaltest.repository.CountryRepository;
 import com.example.technicaltest.repository.GenderRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BootStrapData implements CommandLineRunner {
-
+    private static Logger logger = LogManager.getLogger(BootStrapData.class);
     private final CountryRepository countryRepository;
     private final GenderRepository genderRepository;
 
@@ -29,7 +31,7 @@ public class BootStrapData implements CommandLineRunner {
      */
     @Override
     public void run(String... args) {
-        System.out.println("Create product");
+        logger.info("Set up default gender and country");
 
         Country france = new Country("France", 18);
         countryRepository.save(france);
