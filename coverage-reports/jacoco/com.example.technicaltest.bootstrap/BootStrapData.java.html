@@ -4,12 +4,14 @@ import com.example.technicaltest.model.Country;
 import com.example.technicaltest.model.Gender;
 import com.example.technicaltest.repository.CountryRepository;
 import com.example.technicaltest.repository.GenderRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BootStrapData implements CommandLineRunner {
-
+<span class="fc" id="L14">    private static Logger logger = LogManager.getLogger(BootStrapData.class);</span>
     private final CountryRepository countryRepository;
     private final GenderRepository genderRepository;
 
@@ -18,10 +20,10 @@ public class BootStrapData implements CommandLineRunner {
      * @param countryRepository Country Repository
      * @param genderRepository Gender Repository
      */
-<span class="fc" id="L21">    public BootStrapData(CountryRepository countryRepository, GenderRepository genderRepository) {</span>
-<span class="fc" id="L22">        this.countryRepository = countryRepository;</span>
-<span class="fc" id="L23">        this.genderRepository = genderRepository;</span>
-<span class="fc" id="L24">    }</span>
+<span class="fc" id="L23">    public BootStrapData(CountryRepository countryRepository, GenderRepository genderRepository) {</span>
+<span class="fc" id="L24">        this.countryRepository = countryRepository;</span>
+<span class="fc" id="L25">        this.genderRepository = genderRepository;</span>
+<span class="fc" id="L26">    }</span>
 
     /**
      * Init H2Database.
@@ -29,17 +31,17 @@ public class BootStrapData implements CommandLineRunner {
      */
     @Override
     public void run(String... args) {
-<span class="fc" id="L32">        System.out.println(&quot;Create product&quot;);</span>
+<span class="fc" id="L34">        logger.info(&quot;Set up default gender and country&quot;);</span>
 
-<span class="fc" id="L34">        Country france = new Country(&quot;France&quot;, 18);</span>
-<span class="fc" id="L35">        countryRepository.save(france);</span>
+<span class="fc" id="L36">        Country france = new Country(&quot;France&quot;, 18);</span>
+<span class="fc" id="L37">        countryRepository.save(france);</span>
 
-<span class="fc" id="L37">        Gender male = new Gender(&quot;male&quot;);</span>
-<span class="fc" id="L38">        genderRepository.save(male);</span>
-<span class="fc" id="L39">        Gender female = new Gender(&quot;female&quot;);</span>
-<span class="fc" id="L40">        genderRepository.save(female);</span>
-<span class="fc" id="L41">        Gender other = new Gender(&quot;other&quot;);</span>
-<span class="fc" id="L42">        genderRepository.save(other);</span>
-<span class="fc" id="L43">    }</span>
+<span class="fc" id="L39">        Gender male = new Gender(&quot;male&quot;);</span>
+<span class="fc" id="L40">        genderRepository.save(male);</span>
+<span class="fc" id="L41">        Gender female = new Gender(&quot;female&quot;);</span>
+<span class="fc" id="L42">        genderRepository.save(female);</span>
+<span class="fc" id="L43">        Gender other = new Gender(&quot;other&quot;);</span>
+<span class="fc" id="L44">        genderRepository.save(other);</span>
+<span class="fc" id="L45">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

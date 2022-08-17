@@ -48,12 +48,19 @@ public class User {
 <span class="fc" id="L48">        this.phoneNumber = null;</span>
 <span class="fc" id="L49">    }</span>
 
-<span class="fc" id="L51">    public User(String username, Date birthdate, Country country) {</span>
-<span class="fc" id="L52">        this.name = username;</span>
-<span class="fc" id="L53">        this.birthdate = birthdate;</span>
-<span class="fc" id="L54">        this.country =  country;</span>
-<span class="fc" id="L55">        this.gender = null;</span>
-<span class="fc" id="L56">        this.phoneNumber = null;</span>
-<span class="fc" id="L57">    }</span>
+    /**
+     * Create User Object that can be saved in database
+     *
+     * @param username User name
+     * @param birthdate User birthdate
+     * @param country User country
+     */
+<span class="fc" id="L58">    public User(String username, Date birthdate, Country country) {</span>
+<span class="fc" id="L59">        this.name = username;</span>
+<span class="fc" id="L60">        this.birthdate = birthdate;</span>
+<span class="fc" id="L61">        this.country =  country;</span>
+<span class="fc" id="L62">        this.gender = null;</span>
+<span class="fc" id="L63">        this.phoneNumber = null;</span>
+<span class="fc" id="L64">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

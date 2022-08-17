@@ -112,7 +112,7 @@ public class UserServiceImpl implements IUserService {
      * Check username
      * check if username is unique
      *
-     * @param username String containing the username to check
+     * @param name String containing the username to check
      * @throws InvalidUsernameException if username isn't valid
      */
     private void checkName(String name) throws InvalidUsernameException {

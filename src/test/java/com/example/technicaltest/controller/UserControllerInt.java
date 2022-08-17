@@ -52,7 +52,7 @@ public class UserControllerInt {
         france.setId(1L);
         data.put("id", 5);
         data.put("name", "validUser");
-        data.put("birthdate", "2000-02-20T23:00:00.000+00:00");
+        data.put("birthdate", "2000-02-21T00:00:00.000+00:00");
         data.put("country", france);
         data.put("gender", male);
         data.put("phoneNumber", "0123456789");

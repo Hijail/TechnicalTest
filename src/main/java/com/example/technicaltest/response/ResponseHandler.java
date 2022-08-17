@@ -18,7 +18,6 @@ public class ResponseHandler {
         map.put("status", status.value());
         map.put("message", message);
 
-
         return new ResponseEntity<>(map,status);
     }
 }

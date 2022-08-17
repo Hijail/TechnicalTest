@@ -1,5 +1,6 @@
 package com.example.technicaltest.bootstrap;
 
+import org.apache.logging.log4j.LogManager;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
@@ -7,9 +8,12 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
+import org.apache.logging.log4j.Logger;
+
 @Aspect
 @Component
 public class LogAspect {
+    private static Logger logger = LogManager.getLogger(LogAspect.class);
 
     @Pointcut("execution (public * com.example.technicaltest.service.concretions.*ServiceImpl.*(..))")
     public void methodCall() {
@@ -31,9 +35,8 @@ public class LogAspect {
      */
     @Before("methodCall()")
     public void log(JoinPoint joinPoint) {
-        System.out.printf("Call %s with %d parameters%n",
-                joinPoint.toShortString(),
-                joinPoint.getArgs().length);
+        logger.info("Call " + joinPoint.toShortString() +
+                " with " + joinPoint.getArgs().length + " parameters%n");
     }
 
     /**
@@ -47,9 +50,8 @@ public class LogAspect {
      */
     @AfterThrowing(pointcut = "methodCall()", throwing = "e")
     public void log(JoinPoint joinPoint, Throwable e) {
-        System.out.printf("Return %s with exception %s : %s%n",
-                joinPoint.toShortString(),
-                e.getClass().getSimpleName(),
-                e.getMessage());
+        logger.info("Return " + joinPoint.toShortString() +
+                " with exception " + e.getClass().getSimpleName() +
+                " : " + e.getMessage() + "%n");
     }
 }

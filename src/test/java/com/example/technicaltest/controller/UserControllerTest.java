@@ -40,7 +40,7 @@ public class UserControllerTest {
     private IUserService service;
 
     private User validUser() {
-        final Calendar cal = new GregorianCalendar(2000, Calendar.FEBRUARY, 21);
+        final Calendar cal = new GregorianCalendar(2000, Calendar.FEBRUARY, 10);
 
         return new User("validUser", cal.getTime(), new Country("France", 18));
     }
@@ -50,7 +50,7 @@ public class UserControllerTest {
 
         data.put("id", null);
         data.put("name", "validUser");
-        data.put("birthdate", "2000-02-20T23:00:00.000+00:00");
+        data.put("birthdate", "2000-02-10T00:00:00.000+00:00");
         data.put("country", new Country("France", 18));
         data.put("gender", null);
         data.put("phoneNumber", null);
@@ -67,6 +67,7 @@ public class UserControllerTest {
         String json = mapper.writeValueAsString(user);
         JSONObject responseDetails = new JSONObject();
 
+        System.out.println(user.getBirthdate());
         responseDetails.put("data", validData());
         responseDetails.put("status", HttpStatus.CREATED.value());
         responseDetails.put("message", "User Created");

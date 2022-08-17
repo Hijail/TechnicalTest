@@ -2,8 +2,8 @@ GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_
 TechnicalTest,com.example.technicaltest.service.concretions,UserServiceImpl,0,166,0,22,0,48,0,19,0,8
 TechnicalTest,com.example.technicaltest.swagger,SpringFoxConfig,0,16,0,0,0,7,0,2,0,2
 TechnicalTest,com.example.technicaltest.controller,UserController,0,48,0,0,0,13,0,3,0,3
-TechnicalTest,com.example.technicaltest.bootstrap,BootStrapData,0,54,0,0,0,14,0,2,0,2
-TechnicalTest,com.example.technicaltest.bootstrap,LogAspect,43,3,0,0,10,1,3,1,3,1
+TechnicalTest,com.example.technicaltest.bootstrap,BootStrapData,0,58,0,0,0,15,0,3,0,3
+TechnicalTest,com.example.technicaltest.bootstrap,LogAspect,21,7,0,0,8,2,3,2,3,2
 TechnicalTest,com.example.technicaltest.exception,InvalidGenderException,0,4,0,0,0,2,0,1,0,1
 TechnicalTest,com.example.technicaltest.exception,UserException,0,4,0,0,0,2,0,1,0,1
 TechnicalTest,com.example.technicaltest.exception,InvalidPhoneException,0,4,0,0,0,2,0,1,0,1
@@ -13,5 +13,5 @@ TechnicalTest,com.example.technicaltest.exception,InvalidCountryException,0,4,0,
 TechnicalTest,com.example.technicaltest.model,Gender,4,22,0,0,0,9,1,5,1,5
 TechnicalTest,com.example.technicaltest.model,User,0,78,0,0,0,21,0,14,0,14
 TechnicalTest,com.example.technicaltest.model,Country,0,39,0,0,0,12,0,8,0,8
-TechnicalTest,com.example.technicaltest,TechnicalTestApplication,31,7,6,0,2,1,7,2,4,2
+TechnicalTest,com.example.technicaltest,TechnicalTestApplication,31,14,6,0,2,4,7,3,4,3
 TechnicalTest,com.example.technicaltest.response,ResponseHandler,7,27,0,0,2,5,1,1,1,1
