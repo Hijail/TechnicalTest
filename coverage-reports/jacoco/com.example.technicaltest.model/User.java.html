@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>User.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">TechnicalTest</a> &gt; <a href="index.source.html" class="el_package">com.example.technicaltest.model</a> &gt; <span class="el_source">User.java</span></div><h1>User.java</h1><pre class="source lang-java linenums">package com.example.technicaltest.model;
+
+import javax.persistence.*;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Date;
+
+@Entity
+@Getter
+<span class="fc" id="L13">@Setter</span>
+@Table(name = &quot;users&quot;)
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = &quot;id&quot;)
+<span class="fc" id="L19">    private Long id;</span>
+
+    @ApiModelProperty(position = 1, required = true, value = &quot;example: Jean&quot;)
+    @Column(name=&quot;NAME&quot;, length=50, nullable=false)
+<span class="fc" id="L23">    private String name;</span>
+
+    @ApiModelProperty(position = 2, required = true, value = &quot;example: 2000-08-14T23:18:14.337Z&quot;)
+    @Column(name=&quot;BIRTHDATE&quot;, nullable=false)
+    @Temporal(TemporalType.DATE)
+<span class="fc" id="L28">    private Date birthdate;</span>
+
+    @ApiModelProperty(position = 3, required = true, value = &quot;example: France&quot;)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = &quot;country_id&quot;, referencedColumnName = &quot;id&quot;, nullable = false)
+<span class="fc" id="L33">    private Country country;</span>
+
+    @ApiModelProperty(position = 4, value = &quot;example: male / female / other&quot;)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = &quot;gender_id&quot;, referencedColumnName = &quot;id&quot;)
+<span class="fc" id="L38">    private Gender gender;</span>
+
+    @ApiModelProperty(position = 5, value = &quot;example: 01 23 45 67 89&quot;)
+<span class="fc" id="L41">    private String phoneNumber;</span>
+
+<span class="fc" id="L43">    public User() {</span>
+<span class="fc" id="L44">        this.name = &quot;&quot;;</span>
+<span class="fc" id="L45">        this.birthdate = null;</span>
+<span class="fc" id="L46">        this.country =  null;</span>
+<span class="fc" id="L47">        this.gender = null;</span>
+<span class="fc" id="L48">        this.phoneNumber = null;</span>
+<span class="fc" id="L49">    }</span>
+
+<span class="fc" id="L51">    public User(String username, Date birthdate, Country country) {</span>
+<span class="fc" id="L52">        this.name = username;</span>
+<span class="fc" id="L53">        this.birthdate = birthdate;</span>
+<span class="fc" id="L54">        this.country =  country;</span>
+<span class="fc" id="L55">        this.gender = null;</span>
+<span class="fc" id="L56">        this.phoneNumber = null;</span>
+<span class="fc" id="L57">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

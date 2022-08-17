@@ -15,12 +15,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 /**
@@ -48,7 +50,7 @@ public class UserServiceTest {
      */
     private Country InitCountry(String countryName) {
         Country country = new Country();
-        country.setCountry(countryName);
+        country.setCountryName(countryName);
 
         return country;
     }
@@ -60,9 +62,20 @@ public class UserServiceTest {
      */
     private Gender InitGender(String genderType) {
         Gender gender = new Gender();
-        gender.setGender(genderType);
+        gender.setGenderType(genderType);
 
         return gender;
+    }
+
+    /**
+     * Init valid User Test
+     *
+     * @return new valid User
+     */
+    private User validUser() {
+        final Date birthdate = new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime();
+
+        return new User("validUser", birthdate, InitCountry("France"));
     }
 
     /**
@@ -71,12 +84,11 @@ public class UserServiceTest {
      */
     @Test
     public void testCreateUser() {
-        final User user = new User("validUser");
+        final User user = validUser();
         User create;
 
-        user.setBirthdate(new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime());
-        user.setCountry(InitCountry("France"));
-        given(countryRepository.findByCountry("France")).willReturn(InitCountry("France"));
+        given(countryRepository.findByCountryName("France")).willReturn(InitCountry("France"));
+        given(userRepository.save(user)).willReturn(user);
         try {
             create = userService.createUser(user);
         } catch (Exception e) {
@@ -84,8 +96,8 @@ public class UserServiceTest {
         }
         assertEquals(new SimpleDateFormat("dd MMM yyyy").format(create.getBirthdate()),
                 new SimpleDateFormat("dd MMM yyyy").format(user.getBirthdate()));
-        assertEquals(user.getCountry().getCountry(), create.getCountry().getCountry());
-        assertEquals(user.getUsername(), create.getUsername());
+        assertEquals(user.getCountry().getCountryName(), create.getCountry().getCountryName());
+        assertEquals(user.getName(), create.getName());
     }
 
     /**
@@ -94,12 +106,11 @@ public class UserServiceTest {
      */
     @Test
     public void testInvalidBirthdate() {
-        final User user = new User("invalidBirthdate");
         Country france = new Country("France", 18);
+        Date birthdate = new Date();
+        User user = new User("invalidBirthdate", birthdate, france);
 
-        given(countryRepository.findByCountry("France")).willReturn(france);
-        user.setCountry(france);
-        user.setBirthdate(new GregorianCalendar(2020, Calendar.FEBRUARY, 21).getTime());
+        given(countryRepository.findByCountryName("France")).willReturn(france);
         InvalidBirthdateException exception = assertThrows(InvalidBirthdateException.class, () -> userService.createUser(user));
         assertEquals("You must be of legal age", exception.getMessage());
     }
@@ -110,12 +121,10 @@ public class UserServiceTest {
      */
     @Test
     public void testNullBirthdate() {
-        final User user = new User("nullBirthdate");
         Country france = new Country("France", 18);
+        User user = new User("invalidBirthdate", null, france);
 
-        given(countryRepository.findByCountry("France")).willReturn(france);
-        user.setCountry(france);
-        user.setBirthdate(null);
+        given(countryRepository.findByCountryName("France")).willReturn(france);
         InvalidBirthdateException exception = assertThrows(InvalidBirthdateException.class, () -> userService.createUser(user));
         assertEquals("Null parameters are not allowed", exception.getMessage());
     }
@@ -126,11 +135,10 @@ public class UserServiceTest {
      */
     @Test
     public void testInvalidCountry() {
-        final User user = new User("invalidCountry");
+        final Date birthdate = new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime();
+        final User user = new User("invalidCountry", birthdate, InitCountry("US"));
 
-        user.setBirthdate(new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime());
-        user.setCountry(InitCountry("US"));
-        given(countryRepository.findByCountry("US")).willReturn(null);
+        given(countryRepository.findByCountryName("US")).willReturn(null);
         InvalidCountryException exception = assertThrows(InvalidCountryException.class, () -> userService.createUser(user));
         assertEquals("You must be in France", exception.getMessage());
     }
@@ -141,10 +149,9 @@ public class UserServiceTest {
      */
     @Test
     public void testNullCountry() {
-        final User user = new User("nullCountry");
+        final Date birthdate = new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime();
+        final User user = new User("invalidCountry", birthdate, null);
 
-        user.setBirthdate(new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime());
-        user.setCountry(null);
         InvalidCountryException exception = assertThrows(InvalidCountryException.class, () -> userService.createUser(user));
         assertEquals("Null parameters are not allowed", exception.getMessage());
     }
@@ -155,21 +162,20 @@ public class UserServiceTest {
      */
     @Test
     public void testFirstValidGender() {
-        final User user = new User("validUser");
+        final User user = validUser();
         User create;
         Gender male = InitGender("male");
 
-        user.setBirthdate(new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime());
-        user.setCountry(InitCountry("France"));
         user.setGender(male);
-        given(countryRepository.findByCountry("France")).willReturn(InitCountry("France"));
-        given(genderRepository.findByGender("male")).willReturn(male);
+        given(countryRepository.findByCountryName("France")).willReturn(InitCountry("France"));
+        given(genderRepository.findByGenderType("male")).willReturn(male);
+        given(userRepository.save(user)).willReturn(user);
         try {
             create = userService.createUser(user);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        assertEquals(user.getGender().getGender(), create.getGender().getGender());
+        assertEquals(user.getGender().getGenderType(), create.getGender().getGenderType());
     }
 
     /**
@@ -178,21 +184,20 @@ public class UserServiceTest {
      */
     @Test
     public void testSecondValidGender() {
-        final User user = new User("validUser");
+        final User user = validUser();
         User create;
         Gender female = InitGender("female");
 
-        user.setBirthdate(new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime());
-        user.setCountry(InitCountry("France"));
         user.setGender(female);
-        given(genderRepository.findByGender("female")).willReturn(female);
-        given(countryRepository.findByCountry("France")).willReturn(InitCountry("France"));
+        given(genderRepository.findByGenderType("female")).willReturn(female);
+        given(countryRepository.findByCountryName("France")).willReturn(InitCountry("France"));
+        given(userRepository.save(user)).willReturn(user);
         try {
             create = userService.createUser(user);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        assertEquals(user.getGender().getGender(), create.getGender().getGender());
+        assertEquals(user.getGender().getGenderType(), create.getGender().getGenderType());
     }
 
     /**
@@ -201,21 +206,20 @@ public class UserServiceTest {
      */
     @Test
     public void testThirdValidGender() {
-        final User user = new User("validUser");
+        final User user = validUser();
         User create;
         Gender other = InitGender("other");
 
-        user.setBirthdate(new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime());
-        user.setCountry(InitCountry("France"));
         user.setGender(other);
-        given(genderRepository.findByGender("other")).willReturn(other);
-        given(countryRepository.findByCountry("France")).willReturn(InitCountry("France"));
+        given(genderRepository.findByGenderType("other")).willReturn(other);
+        given(countryRepository.findByCountryName("France")).willReturn(InitCountry("France"));
+        given(userRepository.save(user)).willReturn(user);
         try {
             create = userService.createUser(user);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        assertEquals(user.getGender().getGender(), create.getGender().getGender());
+        assertEquals(user.getGender().getGenderType(), create.getGender().getGenderType());
     }
 
     /**
@@ -224,13 +228,12 @@ public class UserServiceTest {
      */
     @Test
     public void testNullGender() {
-        final User user = new User("validUser");
+        final User user = validUser();
         User create;
 
-        user.setBirthdate(new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime());
-        user.setCountry(InitCountry("France"));
         user.setGender(null);
-        given(countryRepository.findByCountry("France")).willReturn(InitCountry("France"));
+        given(countryRepository.findByCountryName("France")).willReturn(InitCountry("France"));
+        given(userRepository.save(user)).willReturn(user);
         try {
             create = userService.createUser(user);
         } catch (Exception e) {
@@ -245,29 +248,14 @@ public class UserServiceTest {
      */
     @Test
     public void testInvalidGender() {
-        final User user = new User("validUser");
+        final User user = validUser();
         Gender invalid = InitGender("invalid");
 
-        user.setBirthdate(new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime());
-        user.setCountry(InitCountry("France"));
         user.setGender(invalid);
-        given(genderRepository.findByGender("invalid")).willReturn(null);
-        given(countryRepository.findByCountry("France")).willReturn(InitCountry("France"));
+        given(genderRepository.findByGenderType("invalid")).willReturn(null);
+        given(countryRepository.findByCountryName("France")).willReturn(InitCountry("France"));
         InvalidGenderException exception = assertThrows(InvalidGenderException.class, () -> userService.createUser(user));
         assertEquals("Only male / female / other or empty are allow for gender", exception.getMessage());
-    }
-
-    /**
-     * Test create user method
-     * with existing username
-     */
-    @Test
-    public void testUsernameAlreadyExist() {
-        final User user = new User("validUser");
-
-        given(userRepository.findByUsername("validUser")).willReturn(user);
-        InvalidUsernameException exception = assertThrows(InvalidUsernameException.class, () -> userService.createUser(user));
-        assertEquals("Username already exist", exception.getMessage());
     }
 
     /**
@@ -279,15 +267,13 @@ public class UserServiceTest {
         String[] validPhoneNumbers
                 = {"20555501256","202 555 A0125", "(202) 555--0125", "+111 (202) 555%-0125",
                 "6%6 856 789", "+11$ 636 856 789", "636 8A 67 89", "+111 6(6 85 67 89"};
-        final User user = new User("validUser");
+        final User user = validUser();
         int index = 0;
 
-        user.setBirthdate(new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime());
-        user.setCountry(InitCountry("France"));
-        given(countryRepository.findByCountry("France")).willReturn(InitCountry("France"));
+        given(countryRepository.findByCountryName("France")).willReturn(InitCountry("France"));
         for(String phoneNumber : validPhoneNumbers) {
             user.setPhoneNumber(phoneNumber);
-            user.setUsername("user_" + index);
+            user.setName("user_" + index);
             InvalidPhoneException exception = assertThrows(InvalidPhoneException.class, () -> userService.createUser(user));
             assertEquals("Invalid phone number", exception.getMessage());
             index ++;
@@ -303,19 +289,18 @@ public class UserServiceTest {
         String[] validPhoneNumbers
                 = {"2055550125","202 555 0125", "(202) 555-0125", "+111 (202) 555-0125",
                 "636 856 789", "+111 636 856 789", "636 85 67 89", "+111 636 85 67 89", null};
-        final User user = new User("validUser");
+        final User user = validUser();
         int index = 0;
         User create;
 
-        user.setBirthdate(new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime());
-        user.setCountry(InitCountry("France"));
-        given(countryRepository.findByCountry("France")).willReturn(InitCountry("France"));
+        given(countryRepository.findByCountryName("France")).willReturn(InitCountry("France"));
         try {
             for(String phoneNumber : validPhoneNumbers) {
                 user.setPhoneNumber(phoneNumber);
-                user.setUsername("user_" + index);
+                user.setName("user_" + index);
+                given(userRepository.save(user)).willReturn(user);
                 create = userService.createUser(user);
-                assertEquals(user.getUsername(), create.getUsername());
+                assertEquals(user.getName(), create.getName());
                 assertEquals(user.getPhoneNumber(), create.getPhoneNumber());
                 index ++;
             }
@@ -330,7 +315,7 @@ public class UserServiceTest {
      */
     @Test
     public void testGetUserByIdOk() {
-        User user = new User("Jean");
+        final User user = validUser();
 
         user.setId(1L);
         given(userRepository.findById(1L)).willReturn(Optional.of(user));
@@ -347,10 +332,39 @@ public class UserServiceTest {
     @Test
     public void testGetUserByIdFail() {
         final Long id = 1L;
-        User p1 = null;
 
-        given(userRepository.findById(id)).willReturn(Optional.ofNullable(p1));
+        given(userRepository.findById(id)).willReturn(Optional.empty());
         UserException exception = assertThrows(UserException.class, () -> userService.getUserById(id));
         assertEquals("Invalid UserId", exception.getMessage());
+    }
+
+
+    /**
+     * Check null name
+     */
+    @Test
+    public void checkNameIsNull() {
+        final User user = validUser();
+
+        user.setName(null);
+        InvalidUsernameException exception = assertThrows(InvalidUsernameException.class, () -> userService.createUser(user));
+        assertEquals("Null parameters are not allowed", exception.getMessage());
+    }
+
+    /**
+     * Check create user with id define
+     */
+    @Test
+    public void checkUserWithId() {
+        final User user = validUser();
+        final User user2 = validUser();
+        User created;
+
+        user2.setId(1L);
+        given(countryRepository.findByCountryName("France")).willReturn(InitCountry("France"));
+        given(userRepository.save(any(User.class))).willReturn(user);
+        userService.createUser(user);
+        created = userService.createUser(user2);
+        assertEquals(created.getId(), null);
     }
 }

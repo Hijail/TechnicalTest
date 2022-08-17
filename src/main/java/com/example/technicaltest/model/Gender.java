@@ -1,11 +1,14 @@
 package com.example.technicaltest.model;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "gender")
 public class Gender {
     @Id
@@ -14,13 +17,19 @@ public class Gender {
     private Long id;
 
     @ApiModelProperty(position = 1, required = true, value = "male / female / other")
-    private String gender;
+    private String genderType;
 
     public Gender() {
-        this.gender = "";
+        this.genderType = "";
     }
 
+    /**
+     * Create Gender Object that can be saved in database
+     *
+     *
+     * @param gender Gender Type
+     */
     public Gender(String gender) {
-        this.gender = gender;
+        this.genderType = gender;
     }
 }

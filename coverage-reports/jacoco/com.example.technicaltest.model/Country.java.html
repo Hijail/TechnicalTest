@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Country.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">TechnicalTest</a> &gt; <a href="index.source.html" class="el_package">com.example.technicaltest.model</a> &gt; <span class="el_source">Country.java</span></div><h1>Country.java</h1><pre class="source lang-java linenums">package com.example.technicaltest.model;
+
+import javax.persistence.*;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Getter
+<span class="fc" id="L11">@Setter</span>
+@Table(name = &quot;country&quot;)
+public class Country {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = &quot;id&quot;)
+<span class="fc" id="L17">    private Long id;</span>
+
+    @ApiModelProperty(position = 1, required = true, value = &quot;example: France&quot;)
+<span class="fc" id="L20">    private String countryName;</span>
+
+    @ApiModelProperty(position = 2, required = true, value = &quot;example: 18&quot;)
+<span class="fc" id="L23">    private int legalAge;</span>
+
+<span class="fc" id="L25">    public Country() {</span>
+<span class="fc" id="L26">        this.legalAge = 0;</span>
+<span class="fc" id="L27">        this.countryName = &quot;&quot;;</span>
+<span class="fc" id="L28">    }</span>
+
+    /**
+     * Create Country Object that can be save in data base
+     *
+     * Legal age was here to simplify
+     *
+     * @param country Country Name
+     * @param legalAge Legal Age in country
+     */
+<span class="fc" id="L38">    public Country(String country, int legalAge) {</span>
+<span class="fc" id="L39">        this.legalAge = legalAge;</span>
+<span class="fc" id="L40">        this.countryName = country;</span>
+<span class="fc" id="L41">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

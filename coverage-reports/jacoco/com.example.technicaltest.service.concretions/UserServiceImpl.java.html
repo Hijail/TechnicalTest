@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">TechnicalTest</a> &gt; <a href="index.source.html" class="el_package">com.example.technicaltest.service.concretions</a> &gt; <span class="el_source">UserServiceImpl.java</span></div><h1>UserServiceImpl.java</h1><pre class="source lang-java linenums">package com.example.technicaltest.service.concretions;
+
+import com.example.technicaltest.exception.*;
+import com.example.technicaltest.model.Country;
+import com.example.technicaltest.model.Gender;
+import com.example.technicaltest.model.User;
+import com.example.technicaltest.repository.CountryRepository;
+import com.example.technicaltest.repository.GenderRepository;
+import com.example.technicaltest.repository.UserRepository;
+import com.example.technicaltest.service.abstractions.IUserService;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * Class User Service
+ * @author Baptiste Gellato
+ * @version 0.0.1
+ */
+@Service
+public class UserServiceImpl implements IUserService {
+    private final UserRepository userRepository;
+
+    private final CountryRepository countryRepository;
+
+    private final GenderRepository genderRepository;
+
+    /**
+     * User service constructor
+     * Init user service repository
+     *
+     * @param userRepository User repository
+     * @param countryRepository Country repository
+     * @param genderRepository Gender repository
+     */
+<span class="fc" id="L42">    public UserServiceImpl(UserRepository userRepository, CountryRepository countryRepository, GenderRepository genderRepository) {</span>
+<span class="fc" id="L43">        this.userRepository = userRepository;</span>
+<span class="fc" id="L44">        this.countryRepository = countryRepository;</span>
+<span class="fc" id="L45">        this.genderRepository = genderRepository;</span>
+<span class="fc" id="L46">    }</span>
+
+    /**
+     * User service check birthdate
+     *
+     * @param date Birthdate of user
+     * @throws InvalidBirthdateException if birthdate is null or if birthdate is invalid
+     */
+    private void checkBirthDate(Date date, Country country) throws InvalidBirthdateException {
+<span class="fc" id="L55">        LocalDate curDate = LocalDate.now();</span>
+        LocalDate birth;
+        int age;
+
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        if (date == null) {</span>
+<span class="fc" id="L60">            throw new InvalidBirthdateException(&quot;Null parameters are not allowed&quot;);</span>
+        }
+<span class="fc" id="L62">        birth = LocalDate.ofInstant(date.toInstant(), ZoneId.systemDefault());</span>
+<span class="fc" id="L63">        age = Period.between(birth, curDate).getYears();</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        if (age &lt; country.getLegalAge()) {</span>
+<span class="fc" id="L65">            throw new InvalidBirthdateException(&quot;You must be of legal age&quot;);</span>
+        }
+<span class="fc" id="L67">    }</span>
+
+    /**
+     * Check country
+     * check if country correspond to an existing gender
+     *
+     * @param country String containing the country to check
+     * @throws InvalidCountryException if country isn't valid (null or doesn't exist)
+     * @return return existing country if country is valid
+     */
+    private Country checkCountry(Country country) throws InvalidCountryException {
+        Country exist;
+
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        if (country == null) {</span>
+<span class="fc" id="L81">            throw new InvalidCountryException(&quot;Null parameters are not allowed&quot;);</span>
+        }
+<span class="fc" id="L83">        exist = this.countryRepository.findByCountryName(country.getCountryName());</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">        if (exist == null) {</span>
+<span class="fc" id="L85">            throw new InvalidCountryException(&quot;You must be in France&quot;);</span>
+        }
+<span class="fc" id="L87">        return exist;</span>
+    }
+
+    /**
+     * Check gender
+     * check if gender correspond to an existing gender
+     *
+     * @param gender String containing the gender to check
+     * @throws InvalidGenderException if gender doesn't exist
+     * @return return existing gender if gender is valid
+     */
+    private Gender checkGender(Gender gender) throws InvalidGenderException {
+        Gender exist;
+
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        if (gender == null) {</span>
+<span class="fc" id="L102">            return null;</span>
+        }
+<span class="fc" id="L104">        exist = this.genderRepository.findByGenderType(gender.getGenderType());</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        if (exist == null) {</span>
+<span class="fc" id="L106">            throw new InvalidGenderException(&quot;Only male / female / other or empty are allow for gender&quot;);</span>
+        }
+<span class="fc" id="L108">        return exist;</span>
+    }
+
+    /**
+     * Check username
+     * check if username is unique
+     *
+     * @param username String containing the username to check
+     * @throws InvalidUsernameException if username isn't valid
+     */
+    private void checkName(String name) throws InvalidUsernameException {
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        if (name == null) {</span>
+<span class="fc" id="L120">            throw new InvalidUsernameException(&quot;Null parameters are not allowed&quot;);</span>
+        }
+<span class="fc" id="L122">    }</span>
+
+    /**
+     * Check phone number format
+     *
+     * @param phoneNumber String containing the phone number to check
+     * @throws InvalidPhoneException if phone number isn't valid
+     */
+    private void checkPhoneNumber(String phoneNumber) throws InvalidPhoneException {
+<span class="fc" id="L131">        String patterns = &quot;^(\\+\\d{1,3}( )?)?((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$&quot;</span>
+                + &quot;|^(\\+\\d{1,3}( )?)?(\\d{3} ?){2}\\d{3}$&quot;
+                + &quot;|^(\\+\\d{1,3}( )?)?(\\d{3} ?)(\\d{2} ?){2}\\d{2}$&quot;;
+<span class="fc" id="L134">        Pattern pattern = Pattern.compile(patterns);</span>
+        Matcher matcher;
+
+<span class="fc bfc" id="L137" title="All 2 branches covered.">        if (phoneNumber == null) {</span>
+<span class="fc" id="L138">            return;</span>
+        }
+<span class="fc" id="L140">        matcher = pattern.matcher(phoneNumber);</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        if (!matcher.matches()) {</span>
+<span class="fc" id="L142">            throw new InvalidPhoneException(&quot;Invalid phone number&quot;);</span>
+        }
+<span class="fc" id="L144">    }</span>
+
+    /**
+     * Create user
+     *
+     * @param user Contain all user information
+     * @return created user
+     */
+    @Override
+    public User createUser(User user) {
+<span class="fc bfc" id="L154" title="All 2 branches covered.">        if (user.getId() != null) {</span>
+<span class="fc" id="L155">            user.setId(null);</span>
+        }
+<span class="fc" id="L157">        checkName(user.getName());</span>
+<span class="fc" id="L158">        user.setCountry(checkCountry(user.getCountry()));</span>
+<span class="fc" id="L159">        checkBirthDate(user.getBirthdate(), user.getCountry());</span>
+<span class="fc" id="L160">        user.setGender(checkGender(user.getGender()));</span>
+<span class="fc" id="L161">        checkPhoneNumber(user.getPhoneNumber());</span>
+<span class="fc" id="L162">        return this.userRepository.save(user);</span>
+    }
+
+    /**
+     * Get user by user Id
+     *
+     * @param id User Id
+     * @return user
+     * @throws UserException if user is invalid
+     */
+    @Override
+    public User getUserById(Long id) throws UserException {
+<span class="fc" id="L174">        Optional&lt;User&gt; user = this.userRepository.findById(id);</span>
+
+<span class="fc bfc" id="L176" title="All 2 branches covered.">        if (user.isEmpty()) {</span>
+<span class="fc" id="L177">            throw new UserException(&quot;Invalid UserId&quot;);</span>
+        }
+<span class="fc" id="L179">        return user.get();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

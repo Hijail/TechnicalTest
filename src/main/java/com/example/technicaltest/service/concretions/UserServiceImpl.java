@@ -80,7 +80,7 @@ public class UserServiceImpl implements IUserService {
         if (country == null) {
             throw new InvalidCountryException("Null parameters are not allowed");
         }
-        exist = this.countryRepository.findByCountry(country.getCountry());
+        exist = this.countryRepository.findByCountryName(country.getCountryName());
         if (exist == null) {
             throw new InvalidCountryException("You must be in France");
         }
@@ -101,7 +101,7 @@ public class UserServiceImpl implements IUserService {
         if (gender == null) {
             return null;
         }
-        exist = this.genderRepository.findByGender(gender.getGender());
+        exist = this.genderRepository.findByGenderType(gender.getGenderType());
         if (exist == null) {
             throw new InvalidGenderException("Only male / female / other or empty are allow for gender");
         }
@@ -115,11 +115,9 @@ public class UserServiceImpl implements IUserService {
      * @param username String containing the username to check
      * @throws InvalidUsernameException if username isn't valid
      */
-    private void checkUsername(String username) throws InvalidUsernameException {
-        User exist = this.userRepository.findByUsername(username);
-
-        if (exist != null) {
-            throw new InvalidUsernameException("Username already exist");
+    private void checkName(String name) throws InvalidUsernameException {
+        if (name == null) {
+            throw new InvalidUsernameException("Null parameters are not allowed");
         }
     }
 
@@ -131,8 +129,8 @@ public class UserServiceImpl implements IUserService {
      */
     private void checkPhoneNumber(String phoneNumber) throws InvalidPhoneException {
         String patterns = "^(\\+\\d{1,3}( )?)?((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$"
-                + "|^(\\+\\d{1,3}( )?)?(\\d{3}[ ]?){2}\\d{3}$"
-                + "|^(\\+\\d{1,3}( )?)?(\\d{3}[ ]?)(\\d{2}[ ]?){2}\\d{2}$";
+                + "|^(\\+\\d{1,3}( )?)?(\\d{3} ?){2}\\d{3}$"
+                + "|^(\\+\\d{1,3}( )?)?(\\d{3} ?)(\\d{2} ?){2}\\d{2}$";
         Pattern pattern = Pattern.compile(patterns);
         Matcher matcher;
 
@@ -153,13 +151,15 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     public User createUser(User user) {
-        checkUsername(user.getUsername());
+        if (user.getId() != null) {
+            user.setId(null);
+        }
+        checkName(user.getName());
         user.setCountry(checkCountry(user.getCountry()));
         checkBirthDate(user.getBirthdate(), user.getCountry());
         user.setGender(checkGender(user.getGender()));
         checkPhoneNumber(user.getPhoneNumber());
-        this.userRepository.save(user);
-        return user;
+        return this.userRepository.save(user);
     }
 
     /**
@@ -173,7 +173,7 @@ public class UserServiceImpl implements IUserService {
     public User getUserById(Long id) throws UserException {
         Optional<User> user = this.userRepository.findById(id);
 
-        if (!user.isPresent()) {
+        if (user.isEmpty()) {
             throw new UserException("Invalid UserId");
         }
         return user.get();

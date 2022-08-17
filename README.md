@@ -1,33 +1,36 @@
 # TechnicalTest
 
 ## What you’ll build
-You’ll pick a Spring guide and import it into IntelliJ IDEA. Then you can read the guide, work on the code, and run the project.
+You will build and deploy the TechnicalTest API using docker
 
 ## What you’ll need
-About 15 minutes
+About 10 minutes
 
-IntelliJ IDEA
-
-JDK 18 or later
+Docker
 
 ## Installing IntelliJ IDEA
-If you don’t have IntelliJ IDEA (Ultimate Edition) installed yet, visit the link up above. From there, you can download a copy for your platform. To install it simply unpack the downloaded archive.
+If you don’t have docker installed yet, visit the link https://docs.docker.com/engine/install/
 
-When you’re done, go ahead and launch IntelliJ IDEA.
-
-## Importing a Getting Started guide
-To import an existing project you need some code, so clone or copy one of the Getting Started guides, e.g. the REST Service guide:
+## Getting Started guide
+You need some code, so clone or copy the repository:
 
 ```
 $ git clone https://github.com/Hijail/TechnicalTest.git
 ```
 
-With IntelliJ IDEA up and running, click Import Project on the Welcome Screen, or File | Open on the main menu:
+Go to the folder you just downloaded and open shell
 
-![alt text](https://raw.githubusercontent.com/spring-guides/gs-intellij-idea/master/images/spring_guide_welcome_import.png)
+execute the following commands
+```
+docker build -t technical-test .
+docker run -p 8080:8080 -t technical-test
+```
 
-In the pop-up dialog make sure to select either Maven's pom.xml file under the complete folder:
+Now the Technical Test API is launched, and you can use it 
 
-![alt text](https://raw.githubusercontent.com/spring-guides/gs-intellij-idea/master/images/spring_guide_select_gradle_file.png)
+## How to use API
 
-IntelliJ IDEA will create a project with all the code from the guide ready to run.
+to see the different routes a swagger is available on the url http://localhost:8080/swagger-ui.html
+
+and to have examples of use you have the postman collection available in the directory ./documentation of the project
+

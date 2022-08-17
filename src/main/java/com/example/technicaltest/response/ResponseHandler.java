@@ -7,6 +7,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ResponseHandler {
+
+    private ResponseHandler() throws IllegalAccessException {
+        throw new IllegalAccessException("Utility class");
+    }
+
     public static ResponseEntity<Object> generateResponse(String message, HttpStatus status, Object responseObj) {
         Map<String, Object> map = new HashMap<>();
         map.put("data", responseObj);
