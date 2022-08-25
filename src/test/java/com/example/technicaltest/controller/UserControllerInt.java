@@ -1,13 +1,6 @@
 package com.example.technicaltest.controller;
 
-import com.example.technicaltest.TechnicalTestApplication;
-import com.example.technicaltest.model.Country;
-import com.example.technicaltest.model.Gender;
-import com.example.technicaltest.model.User;
-import com.example.technicaltest.repository.CountryRepository;
-import com.example.technicaltest.repository.GenderRepository;
-import com.example.technicaltest.repository.UserRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.example.technicaltest.dto.UserDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -17,10 +10,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,34 +30,38 @@ public class UserControllerInt {
     @Autowired
     private ObjectMapper mapper;
 
-    private User validUser() {
+    private UserDTO validUser() {
         final Calendar cal = new GregorianCalendar(2000, Calendar.FEBRUARY, 21);
-        User user = new User("validUser", cal.getTime(), new Country("France", 18));
+        LocalDate date = LocalDate.ofInstant(cal.toInstant(), ZoneId.systemDefault());
+        UserDTO user = new UserDTO();
 
-        user.setGender(new Gender("male"));
+        user.setName("validUser");
+        user.setBirthdate(date);
+        user.setCountry("France");
+        user.setGender("male");
         user.setPhoneNumber("0123456789");
         return user;
     }
 
     private JSONObject validData() {
         JSONObject data = new JSONObject();
-        Country france = new Country("France", 18);
-        Gender male = new Gender("male");
 
-        male.setId(2L);
-        france.setId(1L);
         data.put("id", 5);
         data.put("name", "validUser");
-        data.put("birthdate", "2000-02-21T00:00:00.000+00:00");
-        data.put("country", france);
-        data.put("gender", male);
+        data.put("birthdate", "2000-02-21");
+        data.put("country", "France");
+        data.put("gender", "male");
         data.put("phoneNumber", "0123456789");
         return data;
     }
 
+    /**
+     * Test post create user with valid user
+     * @throws Exception
+     */
     @Test
     public void createUser_thenStatus201() throws Exception {
-        User user = validUser();
+        UserDTO user = validUser();
         String json = mapper.writeValueAsString(user);
         JSONObject responseDetails = new JSONObject();
 
@@ -75,48 +75,64 @@ public class UserControllerInt {
                         .andExpect(content().json(responseDetails.toString()));
     }
 
+    /**
+     * Test post create user with invalid user birthdate
+     * @throws Exception
+     */
     @Test
-    public void createUserInvalidBirthdate_thenStatus403() throws Exception {
-        User user = new User("Jean", new Date(), new Country("France", 18));
-        String json = mapper.writeValueAsString(user);
+    public void createUserInvalidBirthdate_thenStatus400() throws Exception {
+        Date input = new Date();
+        LocalDate date = LocalDate.ofInstant(input.toInstant(), ZoneId.systemDefault());
+        UserDTO user = validUser();
+        String json;
 
+        user.setBirthdate(date);
+        json = mapper.writeValueAsString(user);
         this.mockMvc.perform(post("/api/v1/users")
                         .content(json)
                         .contentType("application/json"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isBadRequest());
 
         user.setBirthdate(null);
         json = mapper.writeValueAsString(user);
         this.mockMvc.perform(post("/api/v1/users")
                         .content(json)
                         .contentType("application/json"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isBadRequest());
     }
 
+    /**
+     * Test post create user with invalid user country
+     * @throws Exception
+     */
     @Test
-    public void createUserInvalidCountry_thenStatus403() throws Exception {
-        User user = validUser();
+    public void createUserInvalidCountry_thenStatus400() throws Exception {
+        UserDTO user = validUser();
         String json;
 
-        user.setCountry(new Country("US", 21));
+        user.setCountry("US");
         json = mapper.writeValueAsString(user);
 
         this.mockMvc.perform(post("/api/v1/users")
                         .content(json)
                         .contentType("application/json"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isBadRequest());
 
         user.setCountry(null);
         json = mapper.writeValueAsString(user);
         this.mockMvc.perform(post("/api/v1/users")
                         .content(json)
                         .contentType("application/json"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isBadRequest());
     }
 
+    /**
+     * Test post create user with invalid name
+     * @throws Exception
+     */
     @Test
-    public void createUserInvalidName_thenStatus403() throws Exception {
-        User user = validUser();
+    public void createUserInvalidName_thenStatus400() throws Exception {
+        UserDTO user = validUser();
         String json;
 
         user.setName(null);
@@ -125,15 +141,19 @@ public class UserControllerInt {
         this.mockMvc.perform(post("/api/v1/users")
                         .content(json)
                         .contentType("application/json"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isBadRequest());
     }
 
+    /**
+     * Test post create user with invalid gender
+     * @throws Exception
+     */
     @Test
     public void createUserWithInvalidGender_thenStatus400() throws Exception {
-        User user = validUser();
+        UserDTO user = validUser();
         String json;
 
-        user.setGender(new Gender("invalid"));
+        user.setGender("invalid");
         json = mapper.writeValueAsString(user);
 
         this.mockMvc.perform(post("/api/v1/users")
@@ -142,9 +162,13 @@ public class UserControllerInt {
                 .andExpect(status().isBadRequest());
     }
 
+    /**
+     * Test post create user with invalid phone
+     * @throws Exception
+     */
     @Test
     public void createUserWithInvalidPhone_thenStatus400() throws Exception {
-        User user = validUser();
+        UserDTO user = validUser();
         String json;
 
         user.setPhoneNumber("EAKEAKEJLAKJE");
@@ -154,5 +178,43 @@ public class UserControllerInt {
                         .content(json)
                         .contentType("application/json"))
                 .andExpect(status().isBadRequest());
+    }
+
+    /**
+     * Test get user with valid id
+     * @throws Exception
+     */
+    @Test
+    public void getUser_thenStatus200() throws Exception {
+        final Long id = 5L;
+        UserDTO user = validUser();
+        String json;
+
+        user.setId(id);
+        json = mapper.writeValueAsString(user);
+
+        this.mockMvc.perform(get("/api/v1/users/{id}", id)
+                        .content(json)
+                        .contentType("application/json"))
+                        .andExpect(status().isOk());
+    }
+
+    /**
+     * Test get user with invalid id
+     * @throws Exception
+     */
+    @Test
+    public void getUserInvalidID_thenStatus404() throws Exception {
+        final Long id = 15L;
+        UserDTO user = validUser();
+        String json;
+
+        user.setId(id);
+        json = mapper.writeValueAsString(user);
+
+        this.mockMvc.perform(get("/api/v1/users/{id}", id)
+                        .content(json)
+                        .contentType("application/json"))
+                .andExpect(status().isNotFound());
     }
 }

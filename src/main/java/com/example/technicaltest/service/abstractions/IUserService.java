@@ -1,9 +1,9 @@
 package com.example.technicaltest.service.abstractions;
 
-import com.example.technicaltest.model.User;
+import com.example.technicaltest.dto.UserDTO;
 
 public interface IUserService {
-    User createUser(User user);
+    UserDTO createUser(UserDTO user);
 
-    User getUserById(Long id);
+    UserDTO getUserById(Long id);
 }

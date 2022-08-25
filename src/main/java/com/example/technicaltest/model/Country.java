@@ -3,12 +3,14 @@ package com.example.technicaltest.model;
 import javax.persistence.*;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "country")
 public class Country {
     @Id
@@ -21,11 +23,6 @@ public class Country {
 
     @ApiModelProperty(position = 2, required = true, value = "example: 18")
     private int legalAge;
-
-    public Country() {
-        this.legalAge = 0;
-        this.countryName = "";
-    }
 
     /**
      * Create Country Object that can be saved in database

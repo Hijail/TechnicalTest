@@ -1,9 +1,7 @@
 package com.example.technicaltest.controller;
 
-import com.example.technicaltest.exception.InvalidBirthdateException;
-import com.example.technicaltest.exception.InvalidCountryException;
-import com.example.technicaltest.exception.InvalidUsernameException;
-import com.example.technicaltest.exception.UserException;
+import com.example.technicaltest.log.annotation.Supervision;
+import com.example.technicaltest.dto.UserDTO;
 import com.example.technicaltest.model.User;
 import com.example.technicaltest.response.ResponseHandler;
 import com.example.technicaltest.service.abstractions.IUserService;
@@ -42,7 +40,7 @@ public class UserController {
     /**
      * Create user
      *
-     * @param user  Request body how contain user information
+     * @param userDTO  Request body how contain user information
      * @return created user or Bad Request if fail
      */
     @ApiOperation(value = "createUser", notes = "create new user", nickname = "createUser", code = 201)
@@ -51,22 +49,14 @@ public class UserController {
             @ApiResponse(code = 404, message = "Service not found"),
             @ApiResponse(code = 201, message = "User Created",
                     response = User.class, responseContainer = "List"),
-            @ApiResponse(code = 403, message = "[\"Null parameters are not allowed\", \"You must be of legal age\", \"You must be in France\"]"),
-            @ApiResponse(code = 400, message = "[\"Null parameters are not allowed\", \"Only male / female / other or empty are allow for gender\", \"Username already exist\", \"Invalid phone number\"]"),
+            @ApiResponse(code = 400, message = "[\"Null parameters are not allowed\", \"You must be of legal age\", \"You must be in France\", \"Only male / female / other or empty are allow for gender\", \"Username already exist\", \"Invalid phone number\"]"),
     })
     @PostMapping()
-    public ResponseEntity<Object> createUser(@RequestBody User user)
+    @Supervision(dureeMillis = 300)
+    public ResponseEntity<Object> createUser(@RequestBody UserDTO userDTO)
     {
-        User newUser;
-
-        try {
-            newUser = this.userService.createUser(user);
-            return ResponseHandler.generateResponse("User Created", HttpStatus.CREATED, newUser);
-        } catch (InvalidBirthdateException | InvalidCountryException | InvalidUsernameException exc) {
-            return ResponseHandler.generateResponse(exc.getMessage(), HttpStatus.FORBIDDEN, null);
-        } catch (Exception exc) {
-            return ResponseHandler.generateResponse(exc.getMessage(), HttpStatus.BAD_REQUEST, null);
-        }
+        UserDTO newUser = this.userService.createUser(userDTO);
+        return ResponseHandler.generateResponse("User Created", HttpStatus.CREATED, newUser);
     }
 
     /**
@@ -81,17 +71,13 @@ public class UserController {
             @ApiResponse(code = 404, message = "Service not found"),
             @ApiResponse(code = 200, message = "",
                     response = User.class, responseContainer = "List"),
-            @ApiResponse(code = 400, message = "Invalid UserId")
+            @ApiResponse(code = 403, message = "Invalid UserId")
     })
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Supervision(dureeMillis = 40)
     public ResponseEntity<Object> getUserById(@ApiParam(value = "testId", required = true, defaultValue = "5")
                                                   @PathVariable long id) {
-        try {
-            User user = userService.getUserById(id);
-            return ResponseHandler.generateResponse("", HttpStatus.OK, user);
-        }
-        catch (UserException err) {
-            return ResponseHandler.generateResponse(err.getMessage(), HttpStatus.BAD_REQUEST, null);
-        }
+        UserDTO user = userService.getUserById(id);
+        return ResponseHandler.generateResponse("", HttpStatus.OK, user);
     }
 }

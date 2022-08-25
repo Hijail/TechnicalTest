@@ -1,61 +1,50 @@
 package com.example.technicaltest.controller;
 
+import com.example.technicaltest.dto.UserDTO;
 import com.example.technicaltest.exception.*;
-import com.example.technicaltest.model.Country;
-import com.example.technicaltest.model.User;
 import com.example.technicaltest.service.abstractions.IUserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
+import static com.example.technicaltest.response.ResponseHandler.generateResponse;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Class User Controller Test
  * @author Baptiste Gellato
  * @version 0.0.1
  */
-@WebMvcTest(controllers = UserController.class)
+@ExtendWith(MockitoExtension.class)
 public class UserControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
+    @InjectMocks
+    UserController userController;
 
-    @Autowired
-    private ObjectMapper mapper;
-
-    @MockBean
+    @Mock
     private IUserService service;
 
-    private User validUser() {
+    private UserDTO validUser() {
         final Calendar cal = new GregorianCalendar(2000, Calendar.FEBRUARY, 10);
+        LocalDate date = LocalDate.ofInstant(cal.toInstant(), ZoneId.systemDefault());
+        UserDTO user = new UserDTO();
 
-        return new User("validUser", cal.getTime(), new Country("France", 18));
+        user.setName("validUser");
+        user.setCountry("France");
+        user.setBirthdate(date);
+        return user;
     }
 
-    private JSONObject validData() {
-        JSONObject data = new JSONObject();
-
-        data.put("id", null);
-        data.put("name", "validUser");
-        data.put("birthdate", "2000-02-10T00:00:00.000+00:00");
-        data.put("country", new Country("France", 18));
-        data.put("gender", null);
-        data.put("phoneNumber", null);
-        return data;
-    }
     /**
      * Test create user route
      *
@@ -63,108 +52,79 @@ public class UserControllerTest {
      */
     @Test
     public void createUserTest() throws Exception {
-        User user = validUser();
-        String json = mapper.writeValueAsString(user);
-        JSONObject responseDetails = new JSONObject();
+        UserDTO user = validUser();
+        ResponseEntity<Object> expect = generateResponse("User Created", HttpStatus.CREATED, user);
 
-        System.out.println(user.getBirthdate());
-        responseDetails.put("data", validData());
-        responseDetails.put("status", HttpStatus.CREATED.value());
-        responseDetails.put("message", "User Created");
-        given(service.createUser(any(User.class))).willReturn(user);
-        this.mockMvc.perform(post("/api/v1/users")
-                        .content(json)
-                        .contentType("application/json"))
-                        .andExpect(status().isCreated())
-                        .andExpect(content().json(responseDetails.toString()));
+        given(service.createUser(any(UserDTO.class))).willReturn(user);
+        ResponseEntity<Object> responseEntity = userController.createUser(user);
+        assertTrue(expect.equals(responseEntity));
     }
 
+    /**
+     * Test create user with invalid birthdate
+     *
+     * @throws Exception if route doesn't return correct status
+     */
     @Test
     public void createUserTestFailBirthdate() throws Exception {
-        User user = validUser();
-        String json = mapper.writeValueAsString(user);
-        JSONObject responseDetails = new JSONObject();
+        UserDTO user = validUser();
 
-        responseDetails.put("data", null);
-        responseDetails.put("status", HttpStatus.FORBIDDEN.value());
-        responseDetails.put("message", "Null parameters are not allowed");
-        given(service.createUser(any(User.class))).willThrow(new InvalidBirthdateException("Null parameters are not allowed"),
+        given(service.createUser(any(UserDTO.class))).willThrow(new InvalidBirthdateException("Null parameters are not allowed"),
                 new InvalidBirthdateException("You must be of legal age"));
-        this.mockMvc.perform(post("/api/v1/users")
-                        .content(json)
-                        .contentType("application/json"))
-                .andExpect(status().isForbidden())
-                .andExpect(content().json(responseDetails.toString()));
 
-        responseDetails.remove("message");
-        responseDetails.put("message", "You must be of legal age");
-        this.mockMvc.perform(post("/api/v1/users")
-                        .content(json)
-                        .contentType("application/json"))
-                .andExpect(status().isForbidden())
-                .andExpect(content().json(responseDetails.toString()));
-
+        InvalidBirthdateException exception = assertThrows(InvalidBirthdateException.class, () -> userController.createUser(user));
+        assertEquals("Null parameters are not allowed", exception.getMessage());
+        InvalidBirthdateException exception2 = assertThrows(InvalidBirthdateException.class, () -> userController.createUser(user));
+        assertEquals("You must be of legal age", exception2.getMessage());
     }
 
+    /**
+     * Test create user with invalid country
+     *
+     * @throws Exception if route doesn't return correct status
+     */
     @Test
     public void createUserTestFailCountry() throws Exception {
-        User user = validUser();
-        String json = mapper.writeValueAsString(user);
-        JSONObject responseDetails = new JSONObject();
+        UserDTO user = validUser();
 
-        responseDetails.put("data", null);
-        responseDetails.put("status", HttpStatus.FORBIDDEN.value());
-        responseDetails.put("message", "Null parameters are not allowed");
-        given(service.createUser(any(User.class))).willThrow(new InvalidCountryException("Null parameters are not allowed"),
+        given(service.createUser(any(UserDTO.class))).willThrow(new InvalidCountryException("Null parameters are not allowed"),
                 new InvalidCountryException("You must be in France"));
-        this.mockMvc.perform(post("/api/v1/users")
-                        .content(json)
-                        .contentType("application/json"))
-                .andExpect(status().isForbidden())
-                .andExpect(content().json(responseDetails.toString()));
-
-        responseDetails.remove("message");
-        responseDetails.put("message", "You must be in France");
-        this.mockMvc.perform(post("/api/v1/users")
-                        .content(json)
-                        .contentType("application/json"))
-                .andExpect(status().isForbidden())
-                .andExpect(content().json(responseDetails.toString()));
+        InvalidCountryException exception = assertThrows(InvalidCountryException.class, () -> userController.createUser(user));
+        assertEquals("Null parameters are not allowed", exception.getMessage());
+        InvalidCountryException exception2 = assertThrows(InvalidCountryException.class, () -> userController.createUser(user));
+        assertEquals("You must be in France", exception2.getMessage());
     }
 
+    /**
+     * Test create user with invalid gender
+     *
+     * @throws Exception if route doesn't return correct status
+     */
     @Test
     public void createUserTestFailGender() throws Exception {
-        User user = validUser();
-        String json = mapper.writeValueAsString(user);
-        JSONObject responseDetails = new JSONObject();
+        UserDTO user = validUser();
+        ResponseEntity<Object> expect = generateResponse(
+                "Only male / female / other or empty are allow for gender",
+                HttpStatus.BAD_REQUEST, null);
 
-        responseDetails.put("data", null);
-        responseDetails.put("status", HttpStatus.BAD_REQUEST.value());
-        responseDetails.put("message", "Only male / female / other or empty are allow for gender");
-        given(service.createUser(any(User.class))).willThrow(
+        given(service.createUser(any(UserDTO.class))).willThrow(
                 new InvalidGenderException("Only male / female / other or empty are allow for gender"));
-        this.mockMvc.perform(post("/api/v1/users")
-                        .content(json)
-                        .contentType("application/json"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().json(responseDetails.toString()));
+        InvalidGenderException exception = assertThrows(InvalidGenderException.class, () -> userController.createUser(user));
+        assertEquals("Only male / female / other or empty are allow for gender", exception.getMessage());
     }
 
+    /**
+     * Test create user with invalid phone
+     *
+     * @throws Exception if route doesn't return correct status
+     */
     @Test
     public void createUserTestFailPhone() throws Exception {
-        User user = validUser();
-        String json = mapper.writeValueAsString(user);
-        JSONObject responseDetails = new JSONObject();
+        UserDTO user = validUser();
 
-        responseDetails.put("data", null);
-        responseDetails.put("status", HttpStatus.BAD_REQUEST.value());
-        responseDetails.put("message", "Invalid phone number");
-        given(service.createUser(any(User.class))).willThrow(new InvalidPhoneException("Invalid phone number"));
-        this.mockMvc.perform(post("/api/v1/users")
-                        .content(json)
-                        .contentType("application/json"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().json(responseDetails.toString()));
+        given(service.createUser(any(UserDTO.class))).willThrow(new InvalidPhoneException("Invalid phone number"));
+        InvalidPhoneException exception = assertThrows(InvalidPhoneException.class, () -> userController.createUser(user));
+        assertEquals("Invalid phone number", exception.getMessage());
     }
 
     /**
@@ -174,21 +134,11 @@ public class UserControllerTest {
      */
     @Test
     public void createUserTestFailNullUser() throws Exception {
-        final Date birthdate = new GregorianCalendar(2000, Calendar.FEBRUARY, 21).getTime();
-        User user = new User("Jean", birthdate, new Country("France", 18));
-        String json = mapper.writeValueAsString(user);
-        JSONObject responseDetails = new JSONObject();
+        UserDTO user = validUser();
 
-        responseDetails.put("data", null);
-        responseDetails.put("status", HttpStatus.FORBIDDEN.value());
-        responseDetails.put("message", "Null parameters are not allowed");
-        given(service.createUser(any(User.class))).willThrow(new InvalidUsernameException("Null parameters are not allowed"));
-
-        this.mockMvc.perform(post("/api/v1/users")
-                        .content(json)
-                        .contentType("application/json"))
-                        .andExpect(status().isForbidden())
-                        .andExpect(content().json(responseDetails.toString()));
+        given(service.createUser(any(UserDTO.class))).willThrow(new InvalidUsernameException("Null parameters are not allowed"));
+        InvalidUsernameException exception = assertThrows(InvalidUsernameException.class, () -> userController.createUser(user));
+        assertEquals("Null parameters are not allowed", exception.getMessage());
     }
 
     /**
@@ -199,43 +149,30 @@ public class UserControllerTest {
     @Test
     public void getUserByIdTest() throws Exception {
         final Long id = 1L;
-        User user = validUser();
-        JSONObject responseDetails = new JSONObject();
-        JSONObject data = validData();
+        UserDTO user = validUser();
+        ResponseEntity<Object> expect;
 
         user.setId(id);
-        data.put("id", user.getId());
-        responseDetails.put("data", data);
-        responseDetails.put("status", HttpStatus.OK.value());
-        responseDetails.put("message", "");
-        System.out.println(responseDetails.toString());
+        expect = generateResponse("",
+                HttpStatus.OK, user);
         given(service.getUserById(id)).willReturn(user);
-
-        this.mockMvc.perform(get("/api/v1/users/{id}", id)
-                        .contentType("application/json"))
-                .andExpect(status().isOk())
-                .andExpect(content().json(responseDetails.toString()));
+        ResponseEntity<Object> responseEntity  = userController.getUserById(id);
+        assertTrue(expect.equals(responseEntity));
     }
 
     /**
      * Test get user by id error
      *
-     * @throws Exception if route doesn't return Bad Request status
+     * @throws Exception if route doesn't return correct status
      */
     @Test
     public void getUserByIdErrorTest() throws Exception {
         final Long id = 1L;
-        JSONObject responseDetails = new JSONObject();
-
-        responseDetails.put("data", null);
-        responseDetails.put("status", HttpStatus.BAD_REQUEST.value());
-        responseDetails.put("message", "Invalid UserId");
+        ResponseEntity<Object> expect = generateResponse("Invalid UserId",
+                HttpStatus.FORBIDDEN, null);
 
         given(service.getUserById(id)).willThrow(new UserException("Invalid UserId"));
-
-        this.mockMvc.perform(get("/api/v1/users/{id}", id)
-                        .contentType("application/json"))
-                        .andExpect(status().isBadRequest())
-                        .andExpect(content().json(responseDetails.toString()));
+        UserException exception = assertThrows(UserException.class, () -> userController.getUserById(id));
+        assertEquals("Invalid UserId", exception.getMessage());
     }
 }

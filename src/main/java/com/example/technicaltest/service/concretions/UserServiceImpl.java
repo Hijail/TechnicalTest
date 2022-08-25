@@ -1,5 +1,7 @@
 package com.example.technicaltest.service.concretions;
 
+import com.example.technicaltest.log.annotation.Supervision;
+import com.example.technicaltest.dto.UserDTO;
 import com.example.technicaltest.exception.*;
 import com.example.technicaltest.model.Country;
 import com.example.technicaltest.model.Gender;
@@ -8,12 +10,11 @@ import com.example.technicaltest.repository.CountryRepository;
 import com.example.technicaltest.repository.GenderRepository;
 import com.example.technicaltest.repository.UserRepository;
 import com.example.technicaltest.service.abstractions.IUserService;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,6 +32,8 @@ public class UserServiceImpl implements IUserService {
 
     private final GenderRepository genderRepository;
 
+    private final ModelMapper mapper;
+
     /**
      * User service constructor
      * Init user service repository
@@ -39,11 +42,13 @@ public class UserServiceImpl implements IUserService {
      * @param countryRepository Country repository
      * @param genderRepository Gender repository
      */
-    public UserServiceImpl(UserRepository userRepository, CountryRepository countryRepository, GenderRepository genderRepository) {
+    public UserServiceImpl(UserRepository userRepository, CountryRepository countryRepository, GenderRepository genderRepository, ModelMapper mapper) {
         this.userRepository = userRepository;
         this.countryRepository = countryRepository;
         this.genderRepository = genderRepository;
+        this.mapper = mapper;
     }
+
 
     /**
      * User service check birthdate
@@ -51,15 +56,14 @@ public class UserServiceImpl implements IUserService {
      * @param date Birthdate of user
      * @throws InvalidBirthdateException if birthdate is null or if birthdate is invalid
      */
-    private void checkBirthDate(Date date, Country country) throws InvalidBirthdateException {
+    private void checkBirthDate(LocalDate date, Country country) throws InvalidBirthdateException {
         LocalDate curDate = LocalDate.now();
-        LocalDate birth;
+        LocalDate birth = date;
         int age;
 
         if (date == null) {
             throw new InvalidBirthdateException("Null parameters are not allowed");
         }
-        birth = LocalDate.ofInstant(date.toInstant(), ZoneId.systemDefault());
         age = Period.between(birth, curDate).getYears();
         if (age < country.getLegalAge()) {
             throw new InvalidBirthdateException("You must be of legal age");
@@ -146,20 +150,24 @@ public class UserServiceImpl implements IUserService {
     /**
      * Create user
      *
-     * @param user Contain all user information
+     * @param userDTO Contain all user information
      * @return created user
      */
     @Override
-    public User createUser(User user) {
-        if (user.getId() != null) {
-            user.setId(null);
+    @Supervision(dureeMillis = 200)
+    public UserDTO createUser(UserDTO userDTO) {
+        User user;
+
+        if (userDTO.getId() != null) {
+            userDTO.setId(null);
         }
+        user = mapper.map(userDTO, User.class);
         checkName(user.getName());
         user.setCountry(checkCountry(user.getCountry()));
         checkBirthDate(user.getBirthdate(), user.getCountry());
         user.setGender(checkGender(user.getGender()));
         checkPhoneNumber(user.getPhoneNumber());
-        return this.userRepository.save(user);
+        return mapper.map(this.userRepository.save(user), UserDTO.class);
     }
 
     /**
@@ -170,12 +178,13 @@ public class UserServiceImpl implements IUserService {
      * @throws UserException if user is invalid
      */
     @Override
-    public User getUserById(Long id) throws UserException {
+    @Supervision(dureeMillis = 40)
+    public UserDTO getUserById(Long id) throws UserException {
         Optional<User> user = this.userRepository.findById(id);
 
         if (user.isEmpty()) {
             throw new UserException("Invalid UserId");
         }
-        return user.get();
+        return mapper.map(user.get(), UserDTO.class);
     }
 }
