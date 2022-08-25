@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "2e5c7e0b-5029-4feb-9be1-c7aab1e1b4e8",
 		"name": "TechnicalTestApplication Copy",
-		"description": "# Introduction\nThe purpose of this API is to create users and to visualize the users created\n\n# Overview\nThere are two routes on this API,\nthe first one /users which allows to create new user, it is necessary to give him a user of this type :\n{\n    \"username\": \"test\",\n    \"gender\": {\n        \"gender\": \"male\"\n    },\n    \"country\": {\n        \"country\": \"France\"\n    },\n    \"phone\": null,\n    \"birthdate\": \"2000-08-14T23:18:14.337Z\"\n}\n\nThe second /users/{id} allows to retrieve a user thanks to its id\n\n# Error Codes\n\n400 : Null parameters are not allowed\n400 : You must be of legal age\n400 : You must be in France\n400 : Only male / female / other or empty are allow for gender 400 : Username already exist\n400 : Invalid phone number\n400\t: Invalid UserId\n404\t: Service not found\n500\t: Server error\n",
+		"description": "# Introduction\n\nThe purpose of this API is to create users and to visualize the users created\n\n# Overview\n\nThere are two routes on this API,  \nthe first one /users which allows to create new user, it is necessary to give him a user of this type :  \n{  \n\"username\": \"test\",  \n\"gender\": \"male\",  \n\"country\": \"France\",  \n\"phone\": null,  \n\"birthdate\": \"2000-08-14\"  \n}\n\nThe second /users/{id} allows to retrieve a user thanks to its id\n\n# Error Codes\n\n400 : Null parameters are not allowed  \n400 : You must be of legal age  \n400 : You must be in France  \n400 : Only male / female / other or empty are allow for gender 400 : Username already exist  \n400 : Invalid phone number  \n404 : Invalid UserId  \n404 : Service not found  \n500 : Server error",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "5704551"
 	},
@@ -17,7 +17,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"userTest\",\n  \"birthdate\": \"2020-08-14T23:58:20.231Z\",\n  \"country\": {\n    \"countryName\": \"France\"\n  },\n  \"gender\": {\n    \"genderType\": \"male\"\n  },\n  \"phoneNumber\": \"0123456789\"\n}",
+							"raw": "{\n  \"username\": \"userTest\",\n  \"birthdate\": \"2020-08-14\",\n  \"country\": \"France\",\n  \"gender\": \"male\",\n  \"phoneNumber\": \"0123456789\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -45,7 +45,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"userTest\",\n  \"birthdate\": null,\n  \"country\": {\n    \"countryName\": \"France\"\n  },\n  \"gender\": {\n    \"genderType\": \"male\"\n  },\n  \"phoneNumber\": \"0123456789\"\n}",
+							"raw": "{\n  \"username\": \"userTest\",\n  \"birthdate\": null,\n  \"country\": \"France\",\n  \"gender\": \"male\",\n  \"phoneNumber\": \"0123456789\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -73,7 +73,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"userTest\",\n  \"birthdate\": \"2000-08-14T23:58:20.231Z\",\n  \"country\": {\n    \"countryName\": \"US\"\n  },\n  \"gender\": {\n    \"genderType\": \"male\"\n  },\n  \"phoneNumber\": \"0123456789\"\n}",
+							"raw": "{\n  \"username\": \"userTest\",\n  \"birthdate\": \"2000-08-14\",\n  \"country\": \"US\",\n  \"gender\": \"male\",\n  \"phoneNumber\": \"0123456789\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -101,7 +101,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"userTest\",\n  \"birthdate\": \"2000-08-14T23:58:20.231Z\",\n  \"country\": null,\n  \"gender\": {\n    \"genderType\": \"male\"\n  },\n  \"phoneNumber\": \"0123456789\"\n}",
+							"raw": "{\n  \"username\": \"userTest\",\n  \"birthdate\": \"2000-08-14\",\n  \"country\": null,\n  \"gender\": \"male\",\n  \"phoneNumber\": \"0123456789\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -129,7 +129,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"Jean\",\n  \"birthdate\": \"2000-08-14T23:58:20.231Z\",\n  \"country\": {\n    \"countryName\": \"France\"\n  },\n  \"gender\": {\n    \"genderType\": \"invalid\"\n  },\n  \"phoneNumber\": \"0123456789\"\n}",
+							"raw": "{\n  \"username\": \"Jean\",\n  \"birthdate\": \"2000-08-14\",\n  \"country\": \"France\",\n  \"gender\": \"invalid\",\n  \"phoneNumber\": \"0123456789\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -157,7 +157,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"Jean\",\n  \"birthdate\": \"2000-08-14T23:58:20.231Z\",\n  \"country\": {\n    \"countryName\": \"France\"\n  },\n  \"gender\": {\n    \"genderType\": \"male\"\n  },\n  \"phoneNumber\": \"0123X56789\"\n}",
+							"raw": "{\n  \"username\": \"Jean\",\n  \"birthdate\": \"2000-08-14\",\n  \"country\": \"France\",\n  \"gender\": \"male\",\n  \"phoneNumber\": \"0123X56789\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -187,7 +187,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"username\": \"userTest\",\n  \"birthdate\": \"2000-08-14T23:58:20.231Z\",\n  \"country\": {\n    \"countryName\": \"France\"\n  },\n  \"gender\": {\n    \"genderType\": \"male\"\n  },\n  \"phoneNumber\": \"0123456789\"\n}",
+					"raw": "{\n  \"username\": \"userTest\",\n  \"birthdate\": \"2000-08-14\",\n  \"country\": \"France\",\n  \"gender\": \"male\",\n  \"phoneNumber\": \"0123456789\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
