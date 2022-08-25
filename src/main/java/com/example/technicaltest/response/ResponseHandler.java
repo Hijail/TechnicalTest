@@ -12,6 +12,16 @@ public class ResponseHandler {
         throw new IllegalAccessException("Utility class");
     }
 
+    /**
+     * generateResponse
+     *
+     * Method which allows to create the API responses
+     *
+     * @param message response message
+     * @param status response status
+     * @param responseObj response object
+     * @return
+     */
     public static ResponseEntity<Object> generateResponse(String message, HttpStatus status, Object responseObj) {
         Map<String, Object> map = new HashMap<>();
         map.put("data", responseObj);

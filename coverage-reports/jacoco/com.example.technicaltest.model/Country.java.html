@@ -3,29 +3,26 @@
 import javax.persistence.*;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-<span class="fc" id="L11">@Setter</span>
+<span class="fc" id="L12">@NoArgsConstructor</span>
+<span class="fc" id="L13">@AllArgsConstructor</span>
 @Table(name = &quot;country&quot;)
 public class Country {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = &quot;id&quot;)
-<span class="fc" id="L17">    private Long id;</span>
+<span class="fc" id="L19">    private Long id;</span>
 
     @ApiModelProperty(position = 1, required = true, value = &quot;example: France&quot;)
-<span class="fc" id="L20">    private String countryName;</span>
+<span class="fc" id="L22">    private String countryName;</span>
 
     @ApiModelProperty(position = 2, required = true, value = &quot;example: 18&quot;)
-<span class="fc" id="L23">    private int legalAge;</span>
-
-<span class="fc" id="L25">    public Country() {</span>
-<span class="fc" id="L26">        this.legalAge = 0;</span>
-<span class="fc" id="L27">        this.countryName = &quot;&quot;;</span>
-<span class="fc" id="L28">    }</span>
+<span class="fc" id="L25">    private int legalAge;</span>
 
     /**
      * Create Country Object that can be saved in database
@@ -35,9 +32,9 @@ public class Country {
      * @param country Country Name
      * @param legalAge Legal Age in country
      */
-<span class="fc" id="L38">    public Country(String country, int legalAge) {</span>
-<span class="fc" id="L39">        this.legalAge = legalAge;</span>
-<span class="fc" id="L40">        this.countryName = country;</span>
-<span class="fc" id="L41">    }</span>
+<span class="fc" id="L35">    public Country(String country, int legalAge) {</span>
+<span class="fc" id="L36">        this.legalAge = legalAge;</span>
+<span class="fc" id="L37">        this.countryName = country;</span>
+<span class="fc" id="L38">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

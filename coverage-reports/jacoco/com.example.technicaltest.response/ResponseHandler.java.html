@@ -12,13 +12,23 @@ public class ResponseHandler {
 <span class="nc" id="L12">        throw new IllegalAccessException(&quot;Utility class&quot;);</span>
     }
 
+    /**
+     * generateResponse
+     *
+     * Method which allows to create the API responses
+     *
+     * @param message response message
+     * @param status response status
+     * @param responseObj response object
+     * @return
+     */
     public static ResponseEntity&lt;Object&gt; generateResponse(String message, HttpStatus status, Object responseObj) {
-<span class="fc" id="L16">        Map&lt;String, Object&gt; map = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L17">        map.put(&quot;data&quot;, responseObj);</span>
-<span class="fc" id="L18">        map.put(&quot;status&quot;, status.value());</span>
-<span class="fc" id="L19">        map.put(&quot;message&quot;, message);</span>
+<span class="fc" id="L26">        Map&lt;String, Object&gt; map = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L27">        map.put(&quot;data&quot;, responseObj);</span>
+<span class="fc" id="L28">        map.put(&quot;status&quot;, status.value());</span>
+<span class="fc" id="L29">        map.put(&quot;message&quot;, message);</span>
 
-<span class="fc" id="L21">        return new ResponseEntity&lt;&gt;(map,status);</span>
+<span class="fc" id="L31">        return new ResponseEntity&lt;&gt;(map,status);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

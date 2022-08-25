@@ -17,6 +17,10 @@ public class TechnicalTestApplication {
         SpringApplication.run(TechnicalTestApplication.class, args);
     }
 
+    /**
+     * Set default timezone
+     * @return default timezone
+     */
     @Bean
     public TimeZone timeZone(){
         TimeZone defaultTimeZone = TimeZone.getTimeZone("UTC");
