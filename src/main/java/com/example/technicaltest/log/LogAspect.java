@@ -46,16 +46,17 @@ public class LogAspect {
      */
     @Around("methodCall() && springBeanPointcut()")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
-        logger.info("Enter: {}.{}() with argument[s] = {}", joinPoint.getSignature().getDeclaringTypeName(),
-                joinPoint.getSignature().getName(), Arrays.toString(joinPoint.getArgs()));
+        String signature = joinPoint.getSignature().getDeclaringTypeName();
+        String name      = joinPoint.getSignature().getName();
+        String args      = Arrays.toString(joinPoint.getArgs());
+
+        logger.info("Enter: {}.{}() with argument[s] = {}", signature, name, args);
         try {
             Object result = joinPoint.proceed();
-            logger.info("Exit: {}.{}() with result = {}", joinPoint.getSignature().getDeclaringTypeName(),
-                    joinPoint.getSignature().getName(), result);
+            logger.info("Exit: {}.{}() with result = {}", signature, name, result);
             return result;
         } catch (IllegalArgumentException e) {
-            logger.error("Illegal argument: {} in {}.{}()", Arrays.toString(joinPoint.getArgs()),
-                    joinPoint.getSignature().getDeclaringTypeName(), joinPoint.getSignature().getName());
+            logger.error("Illegal argument: {} in {}.{}()", args, signature, name);
             throw e;
         }
     }
@@ -71,8 +72,11 @@ public class LogAspect {
      */
     @AfterThrowing(pointcut = "methodCall() && springBeanPointcut()", throwing = "e")
     public void log(JoinPoint joinPoint, Throwable e) {
-        logger.info("Return " + joinPoint.toShortString() +
-                " with exception " + e.getClass().getSimpleName() +
-                " : " + e.getMessage() + "%n");
+        String execution = joinPoint.toShortString();
+        String exception = e.getClass().getSimpleName();
+        String message   = e.getMessage();
+
+        logger.info("Return {} with exception {} : {}",
+               execution , exception, message);
     }
 }

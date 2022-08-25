@@ -154,7 +154,7 @@ public class UserServiceImpl implements IUserService {
      * @return created user
      */
     @Override
-    @Supervision(dureeMillis = 200)
+    @Supervision(durationMillis = 200)
     public UserDTO createUser(UserDTO userDTO) {
         User user;
 
@@ -178,7 +178,7 @@ public class UserServiceImpl implements IUserService {
      * @throws UserException if user is invalid
      */
     @Override
-    @Supervision(dureeMillis = 40)
+    @Supervision(durationMillis = 40)
     public UserDTO getUserById(Long id) throws UserException {
         Optional<User> user = this.userRepository.findById(id);
 

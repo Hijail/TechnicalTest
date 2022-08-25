@@ -26,7 +26,7 @@ public class User {
     @Column(name="NAME", length=50, nullable=false)
     private String name;
 
-    @ApiModelProperty(position = 2, required = true, value = "example: 2000-08-14T23:18:14.337Z")
+    @ApiModelProperty(position = 2, required = true, value = "example: 2000-08-14")
     @Column(name="BIRTHDATE", nullable=false)
     private LocalDate birthdate;
 
@@ -62,7 +62,7 @@ public class User {
 
     /**
      * define country setter
-     * @param country
+     * @param country Country name
      */
     public void setCountry(Country country) {
         this.country = country;
@@ -70,7 +70,7 @@ public class User {
 
     /**
      * define gender setter
-     * @param gender
+     * @param gender Gender Type
      */
     public void setGender(Gender gender) {
         this.gender = gender;

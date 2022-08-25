@@ -27,16 +27,17 @@ public class SupervisionAspect {
     @Around("@annotation(supervision)")
     public Object superviser(ProceedingJoinPoint joinPoint, Supervision supervision)
             throws Throwable {
-        long maxDuree = supervision.dureeMillis();
+        long maxDuration = supervision.durationMillis();
         long start = System.currentTimeMillis();
         try {
             return joinPoint.proceed(joinPoint.getArgs());
         } finally {
             long end = System.currentTimeMillis();
-            long duree = end - start;
-            if (duree > maxDuree) {
-                logger.info("Attention l'appel à {} à durée {} soit {} de plus qu'attendu%n",
-                        joinPoint.toShortString(), duree, duree - maxDuree);
+            long duration = end - start;
+            if (duration > maxDuration) {
+                String name = joinPoint.toShortString();
+                logger.info("Warning: the call to {} lasted {} which is {} longer than expected",
+                       name , duration, duration - maxDuration);
             }
         }
     }
