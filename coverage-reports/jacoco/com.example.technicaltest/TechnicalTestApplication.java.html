@@ -17,11 +17,15 @@ public class TechnicalTestApplication {
 <span class="nc" id="L17">        SpringApplication.run(TechnicalTestApplication.class, args);</span>
 <span class="nc" id="L18">    }</span>
 
+    /**
+     * Set default timezone
+     * @return default timezone
+     */
     @Bean
     public TimeZone timeZone(){
-<span class="fc" id="L22">        TimeZone defaultTimeZone = TimeZone.getTimeZone(&quot;UTC&quot;);</span>
-<span class="fc" id="L23">        TimeZone.setDefault(defaultTimeZone);</span>
-<span class="fc" id="L24">        return defaultTimeZone;</span>
+<span class="fc" id="L26">        TimeZone defaultTimeZone = TimeZone.getTimeZone(&quot;UTC&quot;);</span>
+<span class="fc" id="L27">        TimeZone.setDefault(defaultTimeZone);</span>
+<span class="fc" id="L28">        return defaultTimeZone;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

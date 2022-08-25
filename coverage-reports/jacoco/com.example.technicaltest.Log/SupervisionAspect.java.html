@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SupervisionAspect.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">TechnicalTest</a> &gt; <a href="index.source.html" class="el_package">com.example.technicaltest.log</a> &gt; <span class="el_source">SupervisionAspect.java</span></div><h1>SupervisionAspect.java</h1><pre class="source lang-java linenums">package com.example.technicaltest.log;
+
+import com.example.technicaltest.log.annotation.Supervision;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
+
+@Aspect
+@Component
+<span class="fc" id="L11">public class SupervisionAspect {</span>
+
+    /**
+     * Superviser method
+     *
+     * A supervisor method that triggers if a method takes longer than expected to execute
+     *
+     * @param joinPoint
+     * @param supervision
+     * @return
+     * @throws Throwable
+     */
+    @Around(&quot;@annotation(supervision)&quot;)
+    public Object superviser(ProceedingJoinPoint joinPoint, Supervision supervision)
+            throws Throwable {
+<span class="nc" id="L26">        long maxDuree = supervision.dureeMillis();</span>
+<span class="nc" id="L27">        long start = System.currentTimeMillis();</span>
+        try {
+<span class="nc" id="L29">            return joinPoint.proceed(joinPoint.getArgs());</span>
+        } finally {
+<span class="nc" id="L31">            long end = System.currentTimeMillis();</span>
+<span class="nc" id="L32">            long duree = end - start;</span>
+<span class="nc bnc" id="L33" title="All 2 branches missed.">            if (duree &gt; maxDuree) {</span>
+<span class="nc" id="L34">                System.out.printf(&quot;Attention l'appel à %s à durée %dms soit %dms de plus qu'attendu%n&quot;,</span>
+<span class="nc" id="L35">                        joinPoint.toShortString(), duree, duree - maxDuree);</span>
+            }
+        }
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
